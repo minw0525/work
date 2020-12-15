@@ -4,10 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+
+        @font-face {
+            font-family: 'Hesiod';
+            font-weight: normal;
+            font-style: normal;
+            src: url('https://files.cargocollective.com/c891600/Hesiod.woff2') format('woff2');
+        }
+        *{
+            margin: 0;
+            padding: 5px;
+        }
+        input{
+            display: block;
+        }
+        p, span{
+            display: inline-block;
+        }
+        textarea{
+            display: block;
+            border: none;
+            outline: none;
+            resize: none;
+            width: 90vw;
+            height: 80vh;
+            overflow: auto;
+            word-wrap: break-word;
+            font-family: 'Hesiod';
+            line-height: 1.19;
+            font-size: 100px;
+            letter-spacing: 0px;
+            text-rendering: geometricPrecision;
+        }
+        textarea::placeholder {
+            color:  #333;
+        }
+        div{
+            display: inline-block;
+        }
+        .dlig{
+            font-variant-ligatures: discretionary-ligatures;  /* high-level property          */
+            -moz-font-feature-settings: 'dlig';               /* low-level (old Firefox)      */
+            -webkit-font-feature-settings: 'dlig';            /* low-level (old Webkit)       */
+            font-feature-settings: 'dlig' on;                 /* low-level (all new browsers) */
+        }
+    </style>
 </head>
 <body>
     parkminwoo.com
     <hr>
-    찾아주셔서 감사합니다. 일주일 후에 다시 와주실 수 있을까요? 😂😂
+    찾아주셔서 감사합니다. 일주일 후에 다시 와주실 수 있을까요? 
+    <br>
+    <div class="divWrap">
+      <div class="sz">
+        <p>size</p><span id="curSz">100px</span>
+        <input type="range" id="size" min="8" max="300" value="100" step="1" oninput="szChange()">
+      </div>
+      <div class="ht">
+        <p>line height</p><span id="curHt">1.2</span>
+        <input type="range" id="lineHeight" min="0.5" max="3" value="1.2" step="0.1" oninput="htChange()">
+      </div>
+      <div class="sp">
+        <p>letter spacing</p><span id="curSp">0px</span>
+        <input type="range" id="spacing" min="-5" max="5" value="0" step="0.5" oninput="spChange()">
+      </div>
+      <div class="color">
+      	<input type="button" id="negative" value="dark" onclick="colorShft()">
+      </div>
+  		<div class="dlig">
+      	<input type="button" id="negative" value="liga" onclick="dlig()">
+      </div>
+    </div>
+    <br>
+    <textarea id="text" rows="4" cols="50" spellcheck="false" style="background-color: white; color: rgb(51, 51, 51);" placeholder="AÁĂÂÄÀĀĄÅÃÆBCĆČÇĊDÐĎĐEÉĚÊËĖÈĒĘFGĞĢĠHĦIÍÎÏİÌĪĮJKĶLĹĽĻŁMNŃŇŅŊÑOÓÔÖÒŐŌØÕŒPÞQRŔŘŖSŚŠŞȘẞTŦŤŢȚUÚÛÜÙŰŪŲŮVWẂŴẄẀXYÝŶŸỲZŹŽŻaáăâäàāąåãæbcćčçċdðďđeéěêëėèēęfgğģġhħiıíîïìīįjȷkķlĺľļłmnńňņŋñoóôöòőōøõœpþqrŕřŗsśšşșßtŧťţțuúûüùűūųůvwẃŵẅẁxyýŷÿỳzźžżffffffiffflffifflfhfjfkfbﬁﬂffstct0123456789.,:;!¡?¿"></textarea>        
+        <script type="text/javascript">
+
+        var szChange = function(){
+            var val = document.querySelector('#size').value;
+         document.querySelector('#text').style.fontSize = val+'px';
+            document.querySelector('#curSz').innerHTML = val + 'px';
+        }   
+
+        var htChange = function(){
+            var val = document.querySelector('#lineHeight').value;
+         document.querySelector('#text').style.lineHeight = val;
+            document.querySelector('#curHt').innerHTML = val;
+        }   
+
+        var spChange = function(){
+            var val = document.querySelector('#spacing').value;
+         document.querySelector('#text').style.letterSpacing = val+'px';
+            document.querySelector('#curSp').innerHTML = val + 'px';
+        }
+
+        var colorShft = function(){
+        if(document.querySelector('#negative').value==='dark'){	document.querySelector('body').style.backgroundColor = 'black';
+                                                               document.querySelector('textarea').style.backgroundColor = 'black';
+              document.querySelector('body').style.color = 'white';
+                                                               document.querySelector('textarea').style.color = 'white';
+                                                                                        document.querySelector('#negative').value = 'light';
+            } else {
+              document.querySelector('body').style.backgroundColor = 'white';
+              document.querySelector('textarea').style.backgroundColor = 'white';
+              document.querySelector('textarea').style.color = '#333';
+              document.querySelector('body').style.color = '#333';
+              document.querySelector('#negative').value = 'dark';
+            }
+
+        }
+
+
+        var dlig = function(){
+            var txt = $('textarea');
+            txt.toggleClass('dlig');
+        }
+        </script>
 </body>
 </html>

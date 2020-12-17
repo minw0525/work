@@ -1,0 +1,298 @@
+@font-face {
+    font-family: 'Hesiod';
+    font-weight: normal;
+    font-style: normal;
+    src: url('https://files.cargocollective.com/c891600/Hesiod.woff2')
+        format('woff2');
+}
+:root {
+    font-size: calc(1vh + 7px);
+    /*color*/
+    --color: white;
+    --bgColor: black;
+    /*size*/
+    --min_gap: 15px;
+    /*font*/
+    --Sans: Sf Pro, Helvetica, sans-serif;
+    --font_big: 3rem;
+    --font_mid: 2rem;
+    --font_small: 1.5rem;
+    --font_micro: 1rem;
+}
+* {
+    margin: 0;
+    padding: 0;
+    font-family: var(--Sans);
+    font-weight: 300;
+    letter-spacing: 0.05rem;
+    font-variant-ligatures: discretionary-ligatures; /* high-level property          */
+    -moz-font-feature-settings: 'dlig'; /* low-level (old Firefox)      */
+    -webkit-font-feature-settings: 'dlig'; /* low-level (old Webkit)       */
+    font-feature-settings: 'dlig' on; /* low-level (all new browsers) */
+}
+html {
+    scroll-behavior: smooth;
+}
+div,
+span,
+a,
+h1,
+h2,
+h3,
+button,
+input,
+textarea {
+    all: unset;
+}
+a {
+    cursor: pointer;
+}
+a:visited {
+    color: inherit;
+}
+body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overscroll-behavior: none;
+    /*overflow: hidden;*/
+    background-color: var(--bgColor);
+    color: var(--color);
+    word-break: keep-all;
+}
+.content {
+    width: 90%;
+    align-self: center;
+}
+nav {
+    align-self: center;
+    height: 60px;
+    width: 90%;
+    color: var(--color);
+    z-index: 5;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    font-size: 1.5rem;
+    position: fixed;
+    padding: 10px 0;
+}
+nav * {
+    display: flex;
+    align-items: center;
+}
+nav span:first-of-type {
+    flex: 1 1 70%;
+}
+nav span:last-of-type {
+    flex: 1 1 30%;
+}
+nav a {
+}
+hr {
+    align-self: center;
+    background-color: var(--color) !important;
+    height: 1px;
+    border: none;
+}
+hr:first-of-type {
+    position: fixed;
+    width: 90%;
+    top: 60px;
+    z-index: 6;
+    margin: 0 auto;
+}
+#title {
+    position: relative;
+    top: -1px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 0.2em;
+    text-align: center;
+    font-family: 'Hesiod';
+}
+h1 {
+    font-size: 15rem;
+}
+h3 {
+    margin-top: 10px;
+    font-size: var(--font_mid);
+    letter-spacing: 0.03em;
+}
+.info {
+    padding: 20px 0 50px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.info > span {
+    flex: 1 1 50%;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+.info > div {
+    flex: 1 1 50%;
+}
+.hvr {
+    display: inline-block;
+    text-align: center;
+    vertical-align: bottom;
+    border-radius: 15px;
+    border: 1px solid var(--color);
+    height: 25px;
+    padding: 0 10px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    position: relative;
+    left: -3px;
+    color: var(--bgColor);
+    background-color: var(--color);
+    font-weight: 500;
+}
+.info p {
+    width: 100%;
+    line-height: 1.5;
+}
+.info p:last-of-type {
+    width: 100%;
+    line-height: 1.33;
+}
+.divWrap {
+    padding: 20px 0;
+    display: flex;
+    justify-content: start;
+}
+.sz {
+    width: 200px;
+    display: inline;
+    vertical-align: center;
+}
+.sz * {
+    display: inline !important;
+}
+#size {
+    width: 200px;
+    position: relative;
+}
+input[type='range'] {
+    display: block;
+    width: 100%;
+    appearance: none;
+    background-color: var(--color);
+    height: 1px;
+}
+input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: var(--color);
+}
+textarea {
+    position: relative;
+    display: block;
+    font-family: 'Hesiod';
+    border: none;
+    outline: none;
+    resize: none;
+    width: 100%;
+    overflow: auto;
+    word-wrap: break-word;
+    line-height: 1.19;
+    font-size: 100px;
+    letter-spacing: 0px;
+    text-rendering: geometricPrecision;
+    background-color: inherit;
+    margin: 20px 0 40px 0;
+}
+textarea:nth-of-type(2) {
+    font-size: 70px;
+}
+textarea:nth-of-type(3) {
+    font-size: 40px;
+}
+div {
+    display: inline-block;
+}
+.dlig {
+}
+hr {
+    padding: 0;
+}
+.all > span {
+    flex: 1 1 20%;
+}
+#glyphs {
+    flex: 1 1 80%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+#glyphs > div {
+    font-family: Hesiod;
+    width: 7vw;
+    height: 7vw;
+    font-size: 4.5vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    outline: 0.1px solid rgba(255, 255, 255, 0.12);
+}
+#glyphs > div:hover::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: var(--color);
+    opacity: 0.5;
+    color: white;
+}
+.charname {
+    display: none;
+}
+.modal {
+    width: 35vh;
+    height: 40vh;
+    position: fixed;
+    margin: auto;
+    top: 70px;
+    left: 5vw;
+    z-index: 10;
+    color: black;
+    font-family: Hesiod;
+    font-size: 25vh;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.modal .char {
+    flex: 1 1 90%;
+    display: flex;
+    align-items: center;
+}
+.modal .name {
+    font-family: var(--Sans);
+    font-size: var(--font_micro);
+    font-weight: 500;
+    flex: 1 1 10%;
+}
+.contact {
+    line-height: 1.33;
+}
+.contact p {
+    flex: 1 1 50%;
+}
+footer {
+    height: 200px;
+}
+.clickable {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+}

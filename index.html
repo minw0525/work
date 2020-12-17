@@ -3,131 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        @font-face {
-            font-family: 'Hesiod';
-            font-weight: normal;
-            font-style: normal;
-            src: url('https://files.cargocollective.com/c891600/Hesiod.woff2') format('woff2');
-        }
-        *{
-            margin: 0;
-            padding: 5px;
-        }
-        body{
-           height: 100%;
-           width: 100%;
-            overscroll-behavior: none;
-            overflow: hidden;
-        }
-        input{
-            display: block;
-        }
-        p, span{
-            display: inline-block;
-        }
-        textarea{
-            display: block;
-            border: none;
-            outline: none;
-            resize: none;
-            width: 100%;
-            height: 80vh;
-            overflow: auto;
-            word-wrap: break-word;
-            font-family: 'Hesiod';
-            line-height: 1.19;
-            font-size: 100px;
-            letter-spacing: 0px;
-            text-rendering: geometricPrecision;
-        }
-        textarea::placeholder {
-            color:  #333;
-        }
-        div{
-            display: inline-block;
-        }
-        .dlig{
-            font-variant-ligatures: discretionary-ligatures;  /* high-level property          */
-            -moz-font-feature-settings: 'dlig';               /* low-level (old Firefox)      */
-            -webkit-font-feature-settings: 'dlig';            /* low-level (old Webkit)       */
-            font-feature-settings: 'dlig' on;                 /* low-level (all new browsers) */
-        }
-        hr{
-            padding:0;
-        }
-    </style>
+    <title>Hesiod</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+    </script>
 </head>
 <body>
-    parkminwoo.com
-    <br>
-    찾아주셔서 감사합니다. 일주일 후에 다시 와주실 수 있을까요?
-    <hr>
-    <br>
-    <div class="divWrap">
-      <div class="sz">
-        <p>size</p><span id="curSz">100px</span>
-        <input type="range" id="size" min="8" max="300" value="100" step="1" oninput="szChange()">
-      </div>
-      <div class="ht">
-        <p>line height</p><span id="curHt">1.2</span>
-        <input type="range" id="lineHeight" min="0.5" max="3" value="1.2" step="0.1" oninput="htChange()">
-      </div>
-      <div class="sp">
-        <p>letter spacing</p><span id="curSp">0px</span>
-        <input type="range" id="spacing" min="-5" max="5" value="0" step="0.5" oninput="spChange()">
-      </div>
-      <div class="color">
-      	<input type="button" id="negative" value="dark" onclick="colorShft()">
-      </div>
-  		<div class="dlig">
-      	<input type="button" id="negative" value="liga" onclick="dlig()">
-      </div>
+    <div class="content">
+        <nav>
+            <span>Hesiod</span>
+            <span>2020</span>
+            <a href="#contact">Contact</a>
+        </nav>
+        <hr>
+        <div id="title">
+            <h1>Hesiod</h1>
+            <h3>Contemporary interpretation of the Roman square capitals.</h3>
+        </div>
+        <hr>
+        <div class="info">
+            <span>About</span>
+            <div class="description">
+                <span class="hvr">Display</span>
+                <span class="hvr">Serif</span>
+                <span class="hvr">Glyphic</span>
+                <p class="ko">Hesiod는 로마 제국의 명각 글자에 영감을 받은 현대적 세리프 글꼴이다. 그 이름에 걸맞게, 곧게 뻗은 당당한 구조와 날카로운 획 처리로 장엄하면서도 환상적인 신화와 서사시의 세계를 표현한다. 고전적 형태를 따르면서도 미묘한 변주를 통해 매력적인 표정을 완성한다. 스크린 디스플레이를 위해 개발되었으며, 좁은 자간과 세밀한 세리프는 50px 이상의 커다란 크기로 사용되었을 때 제 역할을 다한다.</p> 
+                <br>
+                <p class="en">Hesiod is a contemporary interpretation of the Roman square capitals. Fittingly named, it exposes a solemn and mythical world of epics with its straight strokes, sharp serifs, and crisp outlines. It follows a classical form, yet subtle details add a touch of sober beauty. Developed for screens, its close spacing and elaborate details are ideal for large sizes over 50px.</p>
+                <br>
+            </div>
+        </div>
+        <hr>
+        <div class="divWrap info">
+            <span>Regular</span>
+            <div class="sz">
+                <p>size</p>
+                <input type="range" id="size" min="8" max="300" value="100" step="1" oninput="szChange()">
+                <span id="curSz">100px</span>
+            </div>
+         <!--   <div class="dlig">
+                <input type="button" id="negative" value="liga" onclick="dlig()">
+            </div>-->
+        </div>
+        <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
+        <hr>
+        <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
+        <hr>
+        <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
+        <hr>
+        <div class="all info">
+            <span id="totalGlyphs">All Characters</span>
+            <div id="glyphs"></div>
+        </div>   
+        <div class="modal">
+            <div class="char"></div>
+            <div class="name"></div>
+        </div> 
+        <hr>
+        <div class="contact info">
+            <span id="contact">Contact</span>
+            <p>
+                Graphic designer based in Seoul, available for work.
+                <br>
+                <a href="mailto:minw0525@gmail.com" class="clickable">minw0525@gmail.com</a>
+                <br>
+                <a href="https://www.instagram.com/winterbezzangee/" class="clickable">@winterbezzangee</a>
+            </p>
+        </div>
+        <footer></footer>
     </div>
-    <br>
-    <textarea id="text" rows="4" cols="50" spellcheck="false" style="background-color: white; color: rgb(51, 51, 51);">AÁĂÂÄÀĀĄÅÃÆBCĆČÇĊDÐĎĐEÉĚÊËĖÈĒĘFGĞĢĠHĦIÍÎÏİÌĪĮJKĶLĹĽĻŁMNŃŇŅŊÑOÓÔÖÒŐŌØÕŒPÞQRŔŘŖSŚŠŞȘẞTŦŤŢȚUÚÛÜÙŰŪŲŮVWẂŴẄẀXYÝŶŸỲZŹŽŻaáăâäàāąåãæbcćčçċdðďđeéěêëėèēęfgğģġhħiıíîïìīįjȷkķlĺľļłmnńňņŋñoóôöòőōøõœpþqrŕřŗsśšşșßtŧťţțuúûüùűūųůvwẃŵẅẁxyýŷÿỳzźžżffffffiffflffifflfhfjfkfbﬁﬂffstct0123456789.,:;!¡?¿</textarea>        
-        <script type="text/javascript">
+    <script type="text/javascript">
 
-        var szChange = function(){
-            var val = document.querySelector('#size').value;
-         document.querySelector('#text').style.fontSize = val+'px';
-            document.querySelector('#curSz').innerHTML = val + 'px';
-        }   
+    var szChange = function(){
+        var val = document.querySelector('#size').value;
+        document.querySelector('#text').style.fontSize = val+'px';
+        document.querySelector('#curSz').innerHTML = val + 'px';
+    }   
 
-        var htChange = function(){
-            var val = document.querySelector('#lineHeight').value;
-         document.querySelector('#text').style.lineHeight = val;
-            document.querySelector('#curHt').innerHTML = val;
-        }   
+    var htChange = function(){
+        var val = document.querySelector('#lineHeight').value;
+        document.querySelector('#text').style.lineHeight = val;
+        document.querySelector('#curHt').innerHTML = val;
+    }   
 
-        var spChange = function(){
-            var val = document.querySelector('#spacing').value;
-         document.querySelector('#text').style.letterSpacing = val+'px';
-            document.querySelector('#curSp').innerHTML = val + 'px';
+    var spChange = function(){
+        var val = document.querySelector('#spacing').value;
+        document.querySelector('#text').style.letterSpacing = val+'px';
+        document.querySelector('#curSp').innerHTML = val + 'px';
+    }
+
+    var colorShft = function(){
+    if(document.querySelector('#negative').value==='dark'){	document.querySelector('body').style.backgroundColor = 'black';
+                                                            document.querySelector('textarea').style.backgroundColor = 'black';
+            document.querySelector('body').style.color = 'white';
+                                                            document.querySelector('textarea').style.color = 'white';
+                                                                                    document.querySelector('#negative').value = 'light';
+        } else {
+            document.querySelector('body').style.backgroundColor = 'white';
+            document.querySelector('textarea').style.backgroundColor = 'white';
+            document.querySelector('textarea').style.color = '#333';
+            document.querySelector('body').style.color = '#333';
+            document.querySelector('#negative').value = 'dark';
         }
 
-        var colorShft = function(){
-        if(document.querySelector('#negative').value==='dark'){	document.querySelector('body').style.backgroundColor = 'black';
-                                                               document.querySelector('textarea').style.backgroundColor = 'black';
-              document.querySelector('body').style.color = 'white';
-                                                               document.querySelector('textarea').style.color = 'white';
-                                                                                        document.querySelector('#negative').value = 'light';
-            } else {
-              document.querySelector('body').style.backgroundColor = 'white';
-              document.querySelector('textarea').style.backgroundColor = 'white';
-              document.querySelector('textarea').style.color = '#333';
-              document.querySelector('body').style.color = '#333';
-              document.querySelector('#negative').value = 'dark';
-            }
-
-        }
+    }
 
 
-        var dlig = function(){
-            var txt = $('textarea');
-            txt.toggleClass('dlig');
-        }
-        </script>
+    var dlig = function(){
+        var txt = $('textarea');
+        txt.toggleClass('dlig');
+    }
+    </script>
 </body>
 </html>

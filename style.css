@@ -25,10 +25,10 @@
     font-family: var(--Sans);
     font-weight: 300;
     letter-spacing: 0.05rem;
-    font-variant-ligatures: discretionary-ligatures; /* high-level property          */
-    -moz-font-feature-settings: 'dlig'; /* low-level (old Firefox)      */
-    -webkit-font-feature-settings: 'dlig'; /* low-level (old Webkit)       */
-    font-feature-settings: 'dlig' on; /* low-level (all new browsers) */
+    font-variant-ligatures: common-ligatures, discretionary-ligatures; /* high-level property          */
+    -moz-font-feature-settings: 'liga', 'dlig'; /* low-level (old Firefox)      */
+    -webkit-font-feature-settings: 'liga', 'dlig'; /* low-level (old Webkit)       */
+    font-feature-settings: 'liga' on, 'dlig' on; /* low-level (all new browsers) */
 }
 html {
     scroll-behavior: smooth;
@@ -69,15 +69,16 @@ nav {
     height: 60px;
     width: 90%;
     color: var(--color);
+    background-color: var(--bgColor);
     z-index: 5;
     margin: 0 auto;
     display: flex;
     justify-content: center;
     font-size: 1.5rem;
     position: fixed;
-    padding: 10px 0;
 }
 nav * {
+    padding-top: 15px;
     display: flex;
     align-items: center;
 }
@@ -137,7 +138,8 @@ h3 {
     flex: 1 1 50%;
 }
 .hvr {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     text-align: center;
     vertical-align: bottom;
     border-radius: 15px;
@@ -233,9 +235,9 @@ hr {
 }
 #glyphs > div {
     font-family: Hesiod;
-    width: 7vw;
-    height: 7vw;
-    font-size: 4.5vw;
+    width: 6vw;
+    height: 6vw;
+    font-size: 4vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -256,8 +258,8 @@ hr {
     display: none;
 }
 .modal {
-    width: 35vh;
-    height: 40vh;
+    width: 30vh;
+    height: 33vh;
     position: fixed;
     margin: auto;
     top: 70px;

@@ -55,7 +55,7 @@ body {
     display: flex;
     flex-direction: column;
     overscroll-behavior: none;
-    /*overflow: hidden;*/
+    overflow: hidden;
     background-color: var(--bgColor);
     color: var(--color);
     word-break: keep-all;
@@ -63,6 +63,7 @@ body {
 .content {
     width: 90%;
     align-self: center;
+    filter: blur(10px);
 }
 nav {
     align-self: center;
@@ -162,6 +163,17 @@ h3 {
     width: 100%;
     line-height: 1.33;
 }
+.presentation {
+    flex-direction: column;
+    align-items: center;
+}
+.allChar {
+    width: 70%;
+    text-align: center;
+    font-family: Hesiod;
+    font-size: 8rem;
+    word-spacing: 0.2em;
+}
 .divWrap {
     padding: 20px 0;
     display: flex;
@@ -212,6 +224,7 @@ textarea {
 }
 textarea:nth-of-type(2) {
     font-size: 70px;
+    height: unset;
 }
 textarea:nth-of-type(3) {
     font-size: 40px;
@@ -235,9 +248,9 @@ hr {
 }
 #glyphs > div {
     font-family: Hesiod;
-    width: 6vw;
-    height: 6vw;
-    font-size: 4vw;
+    width: 4vw;
+    height: 4vw;
+    font-size: 3vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -297,4 +310,34 @@ footer {
 .clickable {
     text-decoration: underline;
     text-underline-offset: 0.2rem;
+}
+.notOpen {
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 255, 0.8);
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 500;
+    transition: 0.2s ease-in-out;
+}
+.notOpen button {
+    border: 1px solid white;
+    height: 50px;
+    width: 100px;
+    border-radius: 25px;
+    font-size: var(--font_mid);
+    text-align: center;
+}
+.notOpen button:hover {
+    background-color: white;
+    color: blue;
+    cursor: pointer;
 }

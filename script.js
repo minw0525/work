@@ -20,7 +20,7 @@ function writeOnHTML(char){
     }else{
         charTxt = String.fromCharCode(char[1].unicode)
     }
-    console.log(charTxt)
+   // console.log(charTxt)
     const charDiv = document.createElement('div');
     charDiv.setAttribute('class','charDiv');
     charDiv.textContent = charTxt;
@@ -49,4 +49,12 @@ document.addEventListener('click',(e)=>{
     modal.style.display = 'none';
 })
 make();
+
+document.querySelectorAll('textarea').forEach((el)=>console.log(el))
+
+function auto_grow(element) {
+    let h = element.scrollHeight;
+    console.log(h)
+    //element.style.height = (element.scrollHeight)+"px";
+}
 

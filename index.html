@@ -11,7 +11,7 @@
       gtag('config', 'G-XGFMYZGDBW');
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <title>Hesiod</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -46,6 +46,10 @@
             </div>
         </div>
         <hr>
+        <div class="presentation info">
+            <div class="allChar">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz</div>
+        </div>
+        <hr>
         <div class="divWrap info">
             <span>Regular</span>
             <div class="sz">
@@ -57,11 +61,11 @@
                 <input type="button" id="negative" value="liga" onclick="dlig()">
             </div>-->
         </div>
-        <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
+        <textarea id="text" spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.</textarea>        
         <hr>
         <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
         <hr>
-        <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
+        <textarea id="text" rows="2" cols="50" spellcheck="false">In the war of Troy, the Greeks having sacked some of the neighbouring towns, and taken from thence two beautiful captives, Chryseis and Briseis, allotted the first to Agamemnon, and the last to Achilles. Chryses, the father of Chryseis, and priest of Apollo, comes to the Grecian camp to ransom her; with which the action of the poem opens, in the tenth year of the siege. The priest being refused, and insolently dismissed by Agamemnon, entreats for vengeance from his god; who inflicts a pestilence on the Greeks.</textarea>        
         <hr>
         <div class="all info">
             <span id="totalGlyphs">All Characters</span>
@@ -83,6 +87,12 @@
             </p>
         </div>
         <footer></footer>
+    </div>
+    <div class="notOpen">
+        방문해주셔서 감사합니다. 다음 주에 다시 찾아와주실 수 있을까요?
+        <br>  
+        Website in progress. Please come back next week.
+        <br><br><button onclick="okayClick()">Okay</button>
     </div>
     <script type="text/javascript">
 
@@ -124,6 +134,14 @@
     var dlig = function(){
         var txt = $('textarea');
         txt.toggleClass('dlig');
+    }
+    function okayClick(){
+        document.querySelector('.notOpen').style.opacity="0";
+        setTimeout(() => {
+            document.querySelector('.notOpen').style.display="none";            
+        }, 200);
+        document.querySelector('.content').style.filter = "unset";
+        document.querySelector('body').style.overflow = "auto";
     }
     </script>
 </body>

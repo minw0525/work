@@ -156,23 +156,29 @@ h3 {
     font-weight: 500;
 }
 .info p {
-    width: 100%;
+    display: inline-block;
+    width: 49%;
     line-height: 1.5;
 }
 .info p:last-of-type {
-    width: 100%;
+    display: inline-block;
+    width: 50%;
     line-height: 1.33;
+    vertical-align: top;
 }
 .presentation {
     flex-direction: column;
+    font-family: Hesiod;
     align-items: center;
 }
 .allChar {
     width: 70%;
     text-align: center;
-    font-family: Hesiod;
     font-size: 8rem;
     word-spacing: 0.2em;
+}
+.epics {
+    width: 50%;
 }
 .divWrap {
     padding: 20px 0;
@@ -250,12 +256,13 @@ hr {
     font-family: Hesiod;
     width: 4vw;
     height: 4vw;
-    font-size: 3vw;
+    font-size: 2.7vw;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     outline: 0.1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
 }
 #glyphs > div:hover::after {
     content: '';

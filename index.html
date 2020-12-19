@@ -14,16 +14,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <title>Hesiod</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
-    <script src="script.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+    <script defer src="script.js"></script>
     <script>
+        document.documentElement.style.setProperty('--color', 'white')
+        document.documentElement.style.setProperty('--bgColor', 'black')
     </script>
 </head>
 <body>
     <div class="content">
         <nav>
-            <span>Hesiod</span>
+            <span id="toMain">Hesiod</span>
             <span>2020</span>
             <a href="#contact">Contact</a>
         </nav>
@@ -62,11 +63,9 @@
                 <input type="button" id="negative" value="liga" onclick="dlig()">
             </div>-->
         </div>
+        <textarea id="text" spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.The quick brown fox jumps over the lazy dog.</textarea>        
         <textarea id="text" spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.</textarea>        
-        <hr>
-        <textarea id="text" rows="2" cols="50" spellcheck="false">The quick brown fox jumps over the lazy dog.</textarea>        
-        <hr>
-        <textarea id="text" rows="2" cols="50" spellcheck="false">In the war of Troy, the Greeks having sacked some of the neighbouring towns, and taken from thence two beautiful captives, Chryseis and Briseis, allotted the first to Agamemnon, and the last to Achilles. Chryses, the father of Chryseis, and priest of Apollo, comes to the Grecian camp to ransom her; with which the action of the poem opens, in the tenth year of the siege. The priest being refused, and insolently dismissed by Agamemnon, entreats for vengeance from his god; who inflicts a pestilence on the Greeks.</textarea>        
+        <textarea id="text" spellcheck="false" oninput="auto_grow(this)">In the war of Troy, the Greeks having sacked some of the neighbouring towns, and taken from thence two beautiful captives, Chryseis and Briseis, allotted the first to Agamemnon, and the last to Achilles. Chryses, the father of Chryseis, and priest of Apollo, comes to the Grecian camp to ransom her; with which the action of the poem opens, in the tenth year of the siege. The priest being refused, and insolently dismissed by Agamemnon, entreats for vengeance from his god; who inflicts a pestilence on the Greeks.</textarea>        
         <hr>
         <div class="all info">
             <span id="totalGlyphs">All Characters</span>
@@ -88,6 +87,7 @@
             </p>
         </div>
         <footer></footer>
+        <button id="colorShift" onclick="colorShft()"></button>
     </div>
     <div class="notOpen">
         방문해주셔서 감사합니다. 다음 주에 다시 찾아와주실 수 있을까요?
@@ -96,46 +96,6 @@
         <br><br><button onclick="okayClick()">Okay</button>
     </div>
     <script type="text/javascript">
-
-    var szChange = function(){
-        var val = document.querySelector('#size').value;
-        document.querySelector('#text').style.fontSize = val+'px';
-        document.querySelector('#curSz').innerHTML = val + 'px';
-    }   
-
-    var htChange = function(){
-        var val = document.querySelector('#lineHeight').value;
-        document.querySelector('#text').style.lineHeight = val;
-        document.querySelector('#curHt').innerHTML = val;
-    }   
-
-    var spChange = function(){
-        var val = document.querySelector('#spacing').value;
-        document.querySelector('#text').style.letterSpacing = val+'px';
-        document.querySelector('#curSp').innerHTML = val + 'px';
-    }
-
-    var colorShft = function(){
-    if(document.querySelector('#negative').value==='dark'){	document.querySelector('body').style.backgroundColor = 'black';
-                                                            document.querySelector('textarea').style.backgroundColor = 'black';
-            document.querySelector('body').style.color = 'white';
-                                                            document.querySelector('textarea').style.color = 'white';
-                                                                                    document.querySelector('#negative').value = 'light';
-        } else {
-            document.querySelector('body').style.backgroundColor = 'white';
-            document.querySelector('textarea').style.backgroundColor = 'white';
-            document.querySelector('textarea').style.color = '#333';
-            document.querySelector('body').style.color = '#333';
-            document.querySelector('#negative').value = 'dark';
-        }
-
-    }
-
-
-    var dlig = function(){
-        var txt = $('textarea');
-        txt.toggleClass('dlig');
-    }
     function okayClick(){
         document.querySelector('.notOpen').style.opacity="0";
         setTimeout(() => {

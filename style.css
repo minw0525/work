@@ -492,4 +492,8 @@ footer {
     .modal .name {
         font-size: var(--font_small);
     }
+    #colorShift {
+        bottom: 40px;
+        right: 30px;
+    }
 }

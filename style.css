@@ -403,6 +403,7 @@ footer {
     position: fixed;
     bottom: 60px;
     right: 45px;
+    z-index: 100;
     background: url('colorshift.svg');
     cursor: pointer;
     box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.3);

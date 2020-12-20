@@ -57,7 +57,7 @@ body {
 .content {
     width: 90%;
     align-self: center;
-    filter: blur(10px);
+    //filter: blur(10px);
 }
 nav {
     align-self: center;

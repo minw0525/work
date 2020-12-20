@@ -211,8 +211,8 @@ h3 {
     display: inline;
     flex: 1 1 40%;
 }
-#saltCtrl,
-#dligCtrl {
+.saltCtrl,
+.dligCtrl {
     flex: 1 1 30%;
 }
 .control * {
@@ -420,4 +420,76 @@ footer {
     -moz-font-feature-settings: 'salt';
     -webkit-font-feature-settings: 'salt';
     font-feature-settings: 'salt' on;
+}
+@media screen and (max-width: 576px) {
+    h1 {
+        font-size: 25vw;
+    }
+    h3 {
+        font-size: 5vw;
+    }
+    .hvr {
+        margin-bottom: 12px;
+    }
+    .info {
+        flex-direction: column;
+    }
+    .info p {
+        width: 100% !important;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    .latin {
+        align-items: flex-start;
+    }
+    .allChar {
+        font-size: 3rem;
+        margin: 0 3vw;
+        width: auto;
+    }
+    .numeric,
+    .punc {
+        width: 100%;
+        font-size: 2.5rem;
+    }
+    .numeric > div,
+    .punc > div {
+        margin: auto;
+    }
+    .controlPannel {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .szCtrl {
+        display: inline-flex;
+        align-self: flex-start;
+        margin-left: 10px;
+        justify-content: space-between;
+        align-items: center;
+        margin: 3px 0;
+    }
+    .control > * {
+        margin: 5px 10px;
+    }
+    input[data-control='size'] {
+        position: relative;
+    }
+    .divWrap > span:first-child {
+        display: none;
+    }
+    #glyphs > div {
+        width: 15vw;
+        height: 15vw;
+        font-size: 9vw;
+    }
+    .modal {
+        top: 30vh;
+        left: 50vw;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+    .modal .name {
+        font-size: var(--font_small);
+    }
 }

@@ -48,7 +48,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /*overflow: hidden;*/
     overscroll-behavior-x: none;
     background-color: rgba(var(--bgColor), 1);
     color: rgba(var(--color), 1);
@@ -57,7 +57,7 @@ body {
 .content {
     width: 90%;
     align-self: center;
-    //filter: blur(10px);
+    /*filter: blur(10px);*/
 }
 nav {
     align-self: center;

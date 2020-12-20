@@ -47,25 +47,77 @@
             </div>
         </div>
         <hr>
-        <div class="presentation info">
-            <div class="allChar">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz</div>
-            <div class="epics">ILIAD<br>THEOGONY<br>ARGONAUTICA<br>METAMORPHOSES<br>WORKS AND DAYS<br>AENEIS</div>
+        <div class="latin info">
+            <span>Latin</span>
+            <div class="allChar infoContent">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz</div>
+        </div>
+        <div class="numeric info">
+            <span>Numeric</span>
+            <div class="infoContent">0 1 2 3 4 5 6 7 8 9 ⁄<br>′ ″ ‴ $ + − × ÷ = ≠ > < ≥ ≤ ± ~ ^ % ‰ ° </div>
+        </div>
+        <div class="punc info">
+            <span>Punctuation</span>
+            <div class="infoContent">
+                . , : ; … ! ¡ ? ¿ & @ · • * # / \ ( ) { } [ ] - – — _ “ ” ‘ ’ « » ‹ › ' "</div>
         </div>
         <hr>
         <div class="divWrap info">
             <span>Regular</span>
-            <div class="sz">
-                <p>size</p>
-                <input type="range" id="size" min="8" max="300" value="100" step="1" oninput="szChange()">
-                <span id="curSz">100px</span>
+            <div class="controlPannel">
+                <div id="szCtrl" class="control">
+                    <span>size</span>
+                    <input type="range" data-control="size" min="8" max="300" value="100" step="1" oninput="szChange(0)">
+                    <span class="curSz">100px</span>
+                </div>
+                <div id="saltCtrl" class="control ">
+                    <span>Stylistic alternates</span>
+                    <input type="checkbox" data-control="salt" oninput="salt(0)">
+                </div>
+                <div id="dligCtrl" class="control">
+                    <span>Discretionary Ligature</span>
+                    <input type="checkbox" data-control="dlig" oninput="dlig(0)">
+                </div>
             </div>
-         <!--   <div class="dlig">
-                <input type="button" id="negative" value="liga" onclick="dlig()">
-            </div>-->
         </div>
-        <textarea id="text" spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.The quick brown fox jumps over the lazy dog.</textarea>        
-        <textarea id="text" spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.</textarea>        
-        <textarea id="text" spellcheck="false" oninput="auto_grow(this)">In the war of Troy, the Greeks having sacked some of the neighbouring towns, and taken from thence two beautiful captives, Chryseis and Briseis, allotted the first to Agamemnon, and the last to Achilles. Chryses, the father of Chryseis, and priest of Apollo, comes to the Grecian camp to ransom her; with which the action of the poem opens, in the tenth year of the siege. The priest being refused, and insolently dismissed by Agamemnon, entreats for vengeance from his god; who inflicts a pestilence on the Greeks.</textarea>        
+        <textarea spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.The quick brown fox jumps over the lazy dog.</textarea>        
+        <div class="divWrap info">
+            <span></span>
+            <div class="controlPannel">
+                <div id="szCtrl" class="control">
+                    <span>size</span>
+                    <input type="range" data-control="size" min="8" max="300" value="70" step="1" oninput="szChange(1)">
+                    <span class="curSz">70px</span>
+                </div>
+                <div id="saltCtrl" class="control ">
+                    <span>Stylistic alternates</span>
+                    <input type="checkbox" data-control="salt" oninput="salt(1)">
+                </div>
+                <div id="dligCtrl" class="control">
+                    <span>Discretionary Ligature</span>
+                    <input type="checkbox" data-control="dlig" oninput="dlig(1)">
+                </div>
+            </div>
+        </div>
+        <textarea spellcheck="false" oninput="auto_grow(this)">The quick brown fox jumps over the lazy dog.</textarea>        
+        <div class="divWrap info">
+            <span></span>
+            <div class="controlPannel">
+                <div id="szCtrl" class="control">
+                    <span>size</span>
+                    <input type="range" data-control="size" min="8" max="300" value="40" step="1" oninput="szChange(2)">
+                    <span class="curSz">40px</span>
+                </div>
+                <div id="saltCtrl" class="control ">
+                    <span>Stylistic alternates</span>
+                    <input type="checkbox" data-control="salt" oninput="salt(2)">
+                </div>
+                <div id="dligCtrl" class="control">
+                    <span>Discretionary Ligature</span>
+                    <input type="checkbox" data-control="dlig" oninput="dlig(2)">
+                </div>
+            </div>
+        </div>
+        <textarea spellcheck="false" oninput="auto_grow(this)">In the war of Troy, the Greeks having sacked some of the neighbouring towns, and taken from thence two beautiful captives, Chryseis and Briseis, allotted the first to Agamemnon, and the last to Achilles. Chryses, the father of Chryseis, and priest of Apollo, comes to the Grecian camp to ransom her; with which the action of the poem opens, in the tenth year of the siege. The priest being refused, and insolently dismissed by Agamemnon, entreats for vengeance from his god; who inflicts a pestilence on the Greeks.</textarea>        
         <hr>
         <div class="all info">
             <span id="totalGlyphs">All Characters</span>

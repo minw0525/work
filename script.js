@@ -1,7 +1,3 @@
-String.prototype.fillZero = function(width){
-    return this.length >= width ? this:new Array(width-this.length+1).join('0')+this;//남는 길이만큼 0으로 채움
-}
-
 async function make(){
     const font = await opentype.load('https://files.cargocollective.com/c891600/Hesiod-Regular.otf');
     const glyphsData = font.glyphs.glyphs
@@ -14,29 +10,18 @@ async function make(){
     for(char of glyphList){
         writeOnHTML(char)
         //console.log(char)
+        //console.log(char[1].name)
+        //console.log(char[1].unicode)
     }
     document.querySelector('#totalGlyphs').textContent = `All Characters (${glyphList.length})`
 }
 function writeOnHTML(char){
-    //console.log(char)
-    const underbar = /_*/gm;
-    let charTxt = char[1].unicode;
-    let f;
-    if(charTxt === undefined){
-        f = false
-    }else{
-        charTxt = String.fromCharCode(char[1].unicode)
-    }
-    if(f === false) return
     // console.log(charTxt)
     const charDiv = document.createElement('div');
     charDiv.setAttribute('class','charDiv');
-    charDiv.textContent = charTxt;
-    document.querySelector('#glyphs').appendChild(charDiv);
     const charName = document.createElement('div');
-    charName.setAttribute('class','charname')
-    charName.textContent = char[1].name;
-    charDiv.appendChild(charName);
+    charName.setAttribute('class','charname');
+    document.querySelector('#glyphs').appendChild(charDiv);
     charDiv.addEventListener('click',(e)=>{
         e.stopPropagation();
         const txt = e.target.firstChild.textContent;
@@ -48,6 +33,41 @@ function writeOnHTML(char){
         name.textContent = nameTxt;
         modal.style.display = 'flex';
     })
+
+    //console.log(char)
+    const underbar = /_*/gm;
+    const afterDot = /\.[\d|\D]*/gm;
+    let charTxt = char[1].unicode;
+    let f = false;
+    if(charTxt === undefined){
+        charTxt = char[1].name.replace(underbar,'')
+        charTxt = charTxt.replace(afterDot,'')
+        switch (charTxt) {
+            case 'Racute':
+                charTxt = 'Ŕ'
+                break;
+            case 'Rcaron':
+                charTxt = 'Ř'
+                break;
+            case 'Rcommaaccent':
+                charTxt = 'Ŗ'
+                break;
+            case 'idotaccent':
+                charTxt = 'i'
+                break;
+            default:
+                break;
+        }
+        charDiv.style.fontFeatureSettings = "'salt' on"
+    }else{
+        charTxt = String.fromCharCode(char[1].unicode)
+    }
+    if(f) return
+    charDiv.textContent = charTxt;
+    charName.textContent = char[1].name;
+    charDiv.appendChild(charName);
+
+
 }
 document.addEventListener('click',(e)=>{
     const modal = document.querySelector('.modal');
@@ -59,25 +79,39 @@ document.addEventListener('click',(e)=>{
 make();
 
 
-const szChange = function(){
-    let target = document.querySelector('#text');
-    var val = document.querySelector('#size').value;
+const szChange = function(i){
+    const target = document.querySelectorAll('textarea')[i];
+    let val = document.querySelectorAll('[data-control=size]')[i].value;
     target.style.fontSize = val+'px';
-    document.querySelector('#curSz').innerHTML = val + 'px';
+    document.querySelector('.curSz').innerHTML = val + 'px';
     target.style.height = "0px";
     target.style.height = target.scrollHeight+'px';
 }   
-const htChange = function(){
-    var val = document.querySelector('#lineHeight').value;
-    document.querySelector('#text').style.lineHeight = val;
-    document.querySelector('#curHt').innerHTML = val;
-}   
 
-const spChange = function(){
-    var val = document.querySelector('#spacing').value;
-    document.querySelector('#text').style.letterSpacing = val+'px';
-    document.querySelector('#curSp').innerHTML = val + 'px';
+
+let dligChkd = [false, false, false];
+const dlig = function(i){
+    const txt = document.querySelectorAll('textarea')[i];
+    if (!dligChkd[i]){
+        txt.classList.add('dlig');
+        dligChkd[i] = true;
+    }else{
+        txt.classList.remove('dlig');
+        dligChkd[i] = false;
+    }
 }
+let saltChkd = [false, false, false];
+const salt = function(i){
+    const txt = document.querySelectorAll('textarea')[i];
+    if (!saltChkd[i]){
+        txt.classList.add('salt');
+        saltChkd[i] = true;
+    }else{
+        txt.classList.remove('salt');
+        saltChkd[i] = false;
+    }
+}
+
 let colorIndex = 0;
 const colorShft = function(){
     colorIndex++;
@@ -108,20 +142,17 @@ const colorShft = function(){
         if (colorIndex === 6) {colorIndex = -1}
     }
 }
-
-
-const dlig = function(){
-    var txt = $('textarea');
-    txt.toggleClass('dlig');
+window.onload = ()=>{
+    document.querySelectorAll('textarea').forEach((el)=>{
+        console.log(el)
+        el.style.height = '0px';
+        console.log(el.scrollHeight)
+        console.log(el.style.height)
+        let h = el.scrollHeight;
+        console.log(h)
+        el.style.height = (el.scrollHeight)+'px';
+    })
 }
-
-document.querySelectorAll('textarea').forEach((el)=>{
-   //console.log(el)
-    //console.log(el.scrollHeight)
-    //console.log(el.style.height)
-    let h = el.scrollHeight;
-    el.style.height = h+'px';
-})
 
 function auto_grow(element) {
     let h = element.scrollHeight;

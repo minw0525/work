@@ -83,25 +83,25 @@ const colorShft = function(){
     colorIndex++;
     console.log(colorIndex)
     if(colorIndex === 0){
-    document.documentElement.style.setProperty('--color','white');
-    document.documentElement.style.setProperty('--bgColor','black');
+    document.documentElement.style.setProperty('--color','255, 255, 255');
+    document.documentElement.style.setProperty('--bgColor','0, 0, 0');
     }else if(colorIndex===1){
-        document.documentElement.style.setProperty('--color','black');
-        document.documentElement.style.setProperty('--bgColor','white');
+        document.documentElement.style.setProperty('--color','0, 0, 0');
+        document.documentElement.style.setProperty('--bgColor','255, 255, 255');
     }else {
         function getRandomBg(){
-            let randomR =  (Math.floor(Math.random()*122)).toString(16).fillZero(2);
-            let randomG =  (Math.floor(Math.random()*122)).toString(16).fillZero(2);
-            let randomB =  (Math.floor(Math.random()*122)).toString(16).fillZero(2);
-            //console.log(`#${randomR+randomB+randomG}`)
-            return `#${randomR+randomB+randomG}`
+            let randomR =  Math.floor(Math.random()*122);
+            let randomG =  Math.floor(Math.random()*122);
+            let randomB =  Math.floor(Math.random()*122)
+            console.log( `${randomR},${randomB},${randomG}`)
+            return `${randomR},${randomB},${randomG}`
         }
         function getRandomCol(){
-            let randomR =  (Math.floor(Math.random()*122)+123).toString(16).fillZero(2);
-            let randomG =  (Math.floor(Math.random()*122)+123).toString(16).fillZero(2);
-            let randomB =  (Math.floor(Math.random()*122)+123).toString(16).fillZero(2);
-            //console.log(`#${randomR+randomB+randomG}`)
-            return `#${randomR+randomB+randomG}`
+            let randomR =  Math.floor(Math.random()*122)+123;
+            let randomG =  Math.floor(Math.random()*122)+123;
+            let randomB =  Math.floor(Math.random()*122)+123;
+            console.log( `${randomR},${randomB},${randomG}`)
+            return `${randomR},${randomB},${randomG}`
         }
         document.documentElement.style.setProperty('--color', getRandomCol());
         document.documentElement.style.setProperty('--bgColor',getRandomBg());

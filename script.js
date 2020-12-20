@@ -46,7 +46,7 @@ function writeOnHTML(char){
             default:
                 break;
         }
-        charDiv.classList.add('salt');
+        charDiv.style.fontFeatureSettings = `'liga', 'dlig', 'salt'`
     }else{
         charTxt = String.fromCharCode(char[1].unicode)
     }
@@ -63,20 +63,23 @@ function writeOnHTML(char){
         char.textContent = txt;
         name.textContent = nameTxt;
         modal.style.display = 'flex';
-        console.log(e.target)
-        if(e.target.classList.contains('salt')){
-            console.log('yes')
-            char.classList.add('salt')
+        console.log(e.target.style.fontFeatureSettings)
+        if(e.target.style.fontFeatureSettings === `"liga", "dlig", "salt"`){
+            char.style.fontFeatureSettings = `"liga", "dlig", "salt"`
         }
     })
 
 }
 document.addEventListener('click',(e)=>{
+    console.log(e.target)
     const modal = document.querySelector('.modal');
     const char = document.querySelector('.char');
     const name = document.querySelector('.name');
-    if(e.target === modal || e.target === char || e.target === name) return;
-    modal.style.display = 'none';
+    if(e.target === modal || e.target === char || e.target === name){
+        console.log('no');
+    }else{
+        modal.style.display = 'none';
+    }
 })
 make();
 
@@ -94,22 +97,41 @@ const szChange = function(i){
 let dligChkd = [false, false, false];
 const dlig = function(i){
     const txt = document.querySelectorAll('textarea')[i];
+    let otf = txt.style.fontFeatureSettings;
+    const dligReg = /"dlig"/
+    const dligRegF = /"dlig",/
+    const dligRegR = /, "dlig"/
     if (!dligChkd[i]){
-        txt.classList.add('dlig');
+        if(!otf){
+            txt.style.fontFeatureSettings = `"dlig"`;
+        }else if(!dligRegR.exec(otf)){
+            console.log(txt.style.fontFeatureSettings)
+            txt.style.fontFeatureSettings = txt.style.fontFeatureSettings + `, "dlig"`;
+        }
         dligChkd[i] = true;
     }else{
-        txt.classList.remove('dlig');
+        console.log(otf)
+        txt.style.fontFeatureSettings = otf.replace(dligRegF,'').replace(dligRegR,'').replace(dligReg,'');
         dligChkd[i] = false;
     }
 }
 let saltChkd = [false, false, false];
 const salt = function(i){
     const txt = document.querySelectorAll('textarea')[i];
+    let otf = txt.style.fontFeatureSettings;
+    const saltReg = /"salt"/
+    const saltRegF = /"salt",/
+    const saltRegR = /, "salt"/
     if (!saltChkd[i]){
-        txt.classList.add('salt');
+        if(!otf){
+            txt.style.fontFeatureSettings = `"salt"`;
+        }else if(!saltRegR.exec(otf)){
+            console.log(txt.style.fontFeatureSettings)
+            txt.style.fontFeatureSettings = txt.style.fontFeatureSettings + `, "salt"`;
+        }        
         saltChkd[i] = true;
     }else{
-        txt.classList.remove('salt');
+        txt.style.fontFeatureSettings = otf.replace(saltRegF,'').replace(saltRegR,'').replace(saltReg,'');
         saltChkd[i] = false;
     }
 }

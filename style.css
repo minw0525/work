@@ -290,10 +290,7 @@ hr {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 50px;
-    font-variant-ligatures: common-ligatures, discretionary-ligatures; /* high-level property          */
-    -moz-font-feature-settings: 'liga', 'dlig'; /* low-level (old Firefox)      */
-    -webkit-font-feature-settings: 'liga', 'dlig'; /* low-level (old Webkit)       */
-    font-feature-settings: 'liga' on, 'dlig' on; /* low-level (all new browsers) */
+    font-feature-settings: 'liga', 'dlig'; /* low-level (all new browsers) */
 }
 #glyphs > div {
     font-family: Hesiod;
@@ -412,16 +409,7 @@ footer {
     filter: brightness(120%);
     box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.4);
 }
-.dlig {
-    -moz-font-feature-settings: 'liga', 'dlig'; /* low-level (old Firefox)      */
-    -webkit-font-feature-settings: 'liga', 'dlig'; /* low-level (old Webkit)       */
-    font-feature-settings: 'liga' on, 'dlig' on; /* low-level (all new browsers) */
-}
-.salt {
-    -moz-font-feature-settings: 'salt';
-    -webkit-font-feature-settings: 'salt';
-    font-feature-settings: 'salt' on;
-}
+
 @media screen and (max-width: 576px) {
     h1 {
         font-size: 25vw;

@@ -205,11 +205,11 @@ h3 {
 }
 .liga {
     flex-direction: column;
+    font-size: 5rem;
 }
 .liga > div {
     font-feature-settings: 'liga', 'dlig';
     text-align: center;
-    font-size: 5rem;
 }
 .epics {
     width: 50%;
@@ -455,7 +455,8 @@ footer {
         width: auto;
     }
     .numeric,
-    .punc {
+    .punc,
+    .liga {
         width: 100%;
         font-size: 2.5rem;
     }

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: http://parkminwoo.com/sitemap.xml

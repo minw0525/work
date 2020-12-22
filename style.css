@@ -2,8 +2,7 @@
     font-family: 'Hesiod';
     font-weight: normal;
     font-style: normal;
-    src: url('https://files.cargocollective.com/c891600/Hesiod-Regular.woff2')
-        format('woff2');
+    src: url('https://parkminwoo.com/font/Hesiod-Regular.woff2') format('woff2');
 }
 :root {
     font-size: calc(1vh + 7px);

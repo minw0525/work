@@ -31,6 +31,12 @@ function writeOnHTML(char){
         charTxt = char[1].name.replace(underbar,'')
         charTxt = charTxt.replace(afterDot,'')
         switch (charTxt) {
+            case 'Kcommaaccent':
+                charTxt = 'Ķ';
+                break;
+            case 'Rcommaaccent':
+                charTxt = 'Ŗ';
+                break;
             case 'Racute':
                 charTxt = 'Ŕ'
                 break;
@@ -136,6 +142,9 @@ const salt = function(i){
     }
 }
 
+
+
+//bg color///
 let colorIndex = 0;
 const colorShft = function(){
     colorIndex++;

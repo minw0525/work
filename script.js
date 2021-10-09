@@ -30,6 +30,7 @@ function writeOnHTML(char){
     if(charTxt === undefined){
         charTxt = char[1].name.replace(underbar,'')
         charTxt = charTxt.replace(afterDot,'')
+        console.log(char[1])
         switch (charTxt) {
             case 'Kcommaaccent':
                 charTxt = 'Ķ';

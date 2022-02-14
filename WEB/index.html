@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+    <style>
+        @font-face {
+            font-family: 'FLIP';
+            src: url('./ideation3/Rix뵤_220214.woff2');
+        }
+        :root{
+            --bg-color: white;
+            --hr-color: black;
+            --fontSize: '10px';
+
+        }
+        *{
+            padding: 0;
+            margin:0;
+        }
+        .container{
+            width:100%;
+            padding:10px;
+            height: max-content;
+            background-color: white;
+            display:flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: start;
+            border-bottom: 1px solid var(--hr-color);
+            position: sticky;
+            top:0;
+            left:0;
+        }
+        .container>div{
+            display: flex;
+            width: 100%;
+            text-align: left;
+
+        }
+        #size{
+            flex: 80%;
+            width: max-content;
+            text-align: center;
+            font-size: 2rem;
+            display: inline-block;
+            padding: 10px;
+        }
+        #rVal{
+            flex: 20%;
+            padding-left: 10px;
+
+        }
+        #content{
+            font-size: var(--fontSize);
+            font-family: 'FLIP';
+            word-break: break-all;
+            position:absolute;
+            top: 90px;
+            padding:10px;
+        }
+    </style>
+</head>
+<body>
+    <p id="content">
+        aghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosahaghowehosdhfosah
+    </p>
+    <div class="container">
+        <label for="size">Font Size</label>
+        <div>
+            <input type="range" min="5" max="100" value="10" id="size" name="size">
+            <span id="rVal">10px</span>
+        </div>
+    </div>
+    <script>
+        const inputR = document.getElementById("size");
+        const rVal = document.getElementById("rVal");
+        const contentT = document.getElementById("content");
+
+        inputR.addEventListener('input', e=>{
+            document.documentElement.style.setProperty("--fontSize", `${inputR.value}px`);
+            rVal.textContent =`${inputR.value}px`
+        })
+
+        async function load(){
+            await opentype.load('./ideation3/Rix뵤_220214.otf', function(err, font) {
+                if (err) {
+                    alert('Font could not be loaded: ' + err);
+                } else {
+                    console.log(font)
+                    let arrIdx = Array.from(Array(font.glyphs.length).keys())
+                    arrIdx = arrIdx.sort(()=>{
+                        return Math.random()-Math.random();
+                    })
+                    console.log(arrIdx)
+                    arrIdx.forEach((e,i,arr)=>{
+                        arr[i] = String.fromCharCode(font.glyphs.glyphs[e].unicode) ? String.fromCharCode(font.glyphs.glyphs[e].unicode) : null
+
+                    })
+                    console.log(arrIdx.filter(Boolean).join(''))
+                    contentT.innerHTML = arrIdx.filter(Boolean).join('')
+                }
+            });
+        }
+        load()
+        //for (i = 0; i < font.glyphs.length; i++) {
+            
+         //   font.glyphs.glyphs[0]
+
+        //}
+
+        //var movenum = allnum.splice(Math.floor(Math.random() * allnum.length),1)[0]
+	     //   newnum.push(movenum)
+    </script>
+</body>
+</html>

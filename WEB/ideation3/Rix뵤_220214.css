@@ -1,0 +1,9 @@
+/* Webfont: ideation3-Regular */@font-face {
+    font-family: 'ideation3';
+    src: url('RixºÌ_220214.woff2') format('woff2'), /* Modern Browsers */
+         url('RixºÌ_220214.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

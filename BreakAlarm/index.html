@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breaktime Alarm</title>
+    <link rel="stylesheet" href="https://use.typekit.net/efj6mdz.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">쉬는 시간 알람 시계</h1>
+        <section id="current" class="timer">
+          <h2>현재 시간</h2>
+          <span id="currTime">&nbsp;</span>
+        </section>  
+        <section id="left" class="timer">
+          <h2>다음 알람까지 남은 시간</h2>
+          <div>
+            <span id="leftTime">&nbsp;</span>
+          </div>
+        </section>
+        <section id="config">
+          <div class="timeValues">
+            <div class="inputLabel">
+              <h2>몇 시부터 시작할까요?</h2>
+              <h2>몇 분 동안 일할까요?</h2>
+              <h2>몇 분 동안 쉴까요?</h2>
+            </div>
+            <form id="setTime">
+              <div class="inputs">    
+                <input type="time" id="startTime" value="09:00" required> 
+              </div>
+              <div class="inputs">    
+                <input type="number" id="workMin" min="1" max="540" value="50" required>
+                <label for="workMin">분</label>
+              </div>
+              <div class="inputs">    
+                <input type="number" id="breakMin" min="0" max="540" value="10" required>
+                <label for="breakMin">분</label>
+              </div>          
+            </form>
+          </div>
+        </section>
+        <section class="btnSect">
+          <button id="btn" form="setTime">알람 시작</button>
+        </section>
+      </div>
+      <audio src="alarm.mp3" id="alarm"></audio>
+      <div id="modal"></div>
+      <script src="script.js"></script>
+</body>
+</html>

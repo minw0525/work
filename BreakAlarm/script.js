@@ -4,6 +4,7 @@ const configEl = document.getElementById('config');
 const leftEl = document.getElementById('left');
 const modal = document.getElementById('modal')
 const alarm = document.getElementById('alarm')
+const worker = new Worker('worker.js')
 
 let currDate;
 let inputValues;
@@ -33,6 +34,10 @@ const getLeftTimeString = (startTime)=>{
 document.forms[0].addEventListener('submit', (e)=>{
     e.preventDefault();
 
+    if(window.Notification && Notification.permission !== "granted"){
+        Notification.requestPermission()
+    }
+    
     currDate = new Date()
 
     if (!alarmOn) {
@@ -103,6 +108,12 @@ const renderPage = ()=>{
     }    
 }
 
+
+worker.addEventListener('message', (e)=>{
+    renderPage()
+    console.log(e)
+})
+
 const alarmRing = (duration, wOb)=>{
     alarm.play()
     notify(duration, wOb)
@@ -136,11 +147,4 @@ const notify = (duration, wOb)=>{
     }
 }
 
-
-window.onload = ()=>{
-    if(window.Notification){
-        Notification.requestPermission()
-    }
-}
-renderPage()
-setInterval(renderPage, 1000)
+worker.postMessage('')

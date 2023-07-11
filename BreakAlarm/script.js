@@ -138,7 +138,7 @@ const notify = (duration, wOb)=>{
     const [period1, period2] = wOb === 1? [`업무 시간`, `쉬는 시간`] : [`쉬는 시간`, `업무 시간`]
     const option = {
         body: `${duration} 분 후 ${period2} 알림 예정입니다.`,
-        tag: `breakAlarm`
+        // tag: `breakAlarm`
     }
     if (Notification.permission === "granted") {
         new Notification(`${period1}입니다.`, option);

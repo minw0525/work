@@ -5,7 +5,7 @@ const leftEl = document.getElementById('left');
 const modal = document.getElementById('modal')
 const alarm = document.getElementById('alarm')
 const worker = new Worker('worker.js')
-
+ 
 let currDate;
 let inputValues;
 let alarmOn = false;

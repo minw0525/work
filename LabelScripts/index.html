@@ -92,6 +92,7 @@
 
     <hr>
     <div id="typeHere" contenteditable="true"></div>
+    <div id="typeHere2" contenteditable="true"></div>
 </div>
 
 
@@ -166,7 +167,6 @@ function sortKeys(dict) {
 function displayNames(names) {
     var html = '';
     ['unicode', 'macintosh', 'windows'].forEach( platform => {
-        console.log(names)
         var platformNames = (names ? names[platform] : null);
 
         if ( ! platformNames ) return;
@@ -245,11 +245,12 @@ async function onFontLoaded(font) {
     displayFontData();
 }
 
-function onReadFile(e) {
+async function onReadFile(e) {
     document.getElementById('font-name').innerHTML = '';
     var file = e.target.files[0];
-    parseFont(file)
-    previewFont(file)
+    await parseFont(file)
+    await previewFont2(file)
+    await previewFont(file)
 }
 function parseFont(file){
     var reader = new FileReader();
@@ -274,12 +275,20 @@ function parseFont(file){
 function previewFont(file){
     const reader = new FileReader();
     reader.onload = (e)=>{
-        document.getElementById("uploadFont").innerHTML = "<style>@font-face{font-family: preview;src: url(" + e.target.result + ");}</style>"
+        document.getElementById("uploadFont").innerHTML += "<style>@font-face{font-family: preview;src: url(" + e.target.result + ");}</style>"
     }
     console.log(file)
     reader.readAsDataURL(file);
 }
 var fontFileName = 'fonts/FiraSansMedium.woff';
+
+
+function previewFont2(file){
+    const fontUrl = window.URL.createObjectURL(file)
+    console.log(fontUrl)
+    document.getElementById("uploadFont").innerHTML += "<style>@font-face{font-family: preview2; src: url(" + fontUrl + ");}</style>"
+}
+
 
 document.getElementById('font-name').innerHTML = fontFileName.split('/')[1];
 

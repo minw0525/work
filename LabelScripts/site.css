@@ -304,3 +304,10 @@ span.offcurve { color: red; }
     font-size: 2rem;
     font-family: preview, sans-serif;
 }
+#typeHere2{
+    border: 1px solid black;
+    width: 500px;
+    height : 10rem;
+    font-size: 2rem;
+    font-family: preview2, sans-serif;
+}

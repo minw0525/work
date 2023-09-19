@@ -7,6 +7,7 @@ export default class Font {
         this.url = url;
         this.fileName = fileName;
         this.font = font;
+        this.names = font.names[this.platform] ?? font.names;
         this.platform = (()=>{
             const platform = (navigator.userAgentData?.platform||navigator.platform).toLowerCase();
             if(platform.startsWith("Mac")) return "macintosh";
@@ -44,9 +45,8 @@ export default class Font {
 
     getNames(){
         const font = this.font;
-        const names = font.names[this.platform];
-        this.family = (names.preferredFamily && names.preferredFamily.en) || names.fontFamily.en;
-        this.style = (names.preferredSubfamily && names.preferredSubfamily.en) || (names.fontSubfamily && names.fontSubfamily.en) || (names.fontFamily && names.fontFamily.en);
+        this.family = (this.names.preferredFamily && this.names.preferredFamily.en) || this.names.fontFamily.en;
+        this.style = (this.names.preferredSubfamily && this.names.preferredSubfamily.en) || (this.names.fontSubfamily && this.names.fontSubfamily.en) || (this.names.fontFamily && this.names.fontFamily.en);
 
         this.cssFamily = this.family + '-' + this.style;
         this.cssStyle = /(italic|oblique)/gi.test(this.style) ? "italic" : "normal";
@@ -55,7 +55,6 @@ export default class Font {
     }
     getFeatures(){
         const font = this.font;
-        const names = font.names[this.platform];
         const gpos = font.tables.gpos || {};
         const gsub = font.tables.gsub || {};
 
@@ -74,9 +73,9 @@ export default class Font {
         .sort((a, b) => a.name > b.name);
         loclLanguages.unshift({ tag: '', htmlTag: '', name: 'automatic' });
 
-        const stylisticSetNames = Object.getOwnPropertyNames(names)
+        const stylisticSetNames = Object.getOwnPropertyNames(this.names)
         .filter(p => /\d+/.test(p))
-        .map(p => names[p].en);
+        .map(p => this.names[p].en);
         let i = 0;
         const getStylisticSetName = function () {
             return stylisticSetNames[i++];

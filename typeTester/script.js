@@ -1,3 +1,4 @@
+import * as opentype from "./modules/opentype.module.js";
 import Font  from "./modules/Font.js";
 import ControlBar  from "./modules/Controls.js";
 
@@ -56,7 +57,6 @@ const displayFontData = (font)=>{
 }
 
 const setFontFace = (fontFace)=>{
-    console.log(preview.children)
     const newStyle = document.createElement("style");
     newStyle.appendChild(document.createTextNode(fontFace));
 
@@ -71,6 +71,7 @@ const setFontFace = (fontFace)=>{
 const parseFont = async (fontFile)=>{
     try {
         const opentypeFont = opentype.parse(await fontFile.arrayBuffer())
+        console.log(opentypeFont)
         return opentypeFont
     } catch (error) {
         showErrorMessage(error)

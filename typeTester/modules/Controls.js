@@ -71,7 +71,6 @@ class ToolboxHeader extends HTMLElement{
             this.instancesSelect.disabled = true;
             this.presets.unshift({name:{en:'-'}})
         }
-        console.log(this.presets)
         for(const instance of this.presets){
             const option = document.createElement('option');
             option.textContent = instance.name.en;
@@ -258,8 +257,9 @@ class FeatureBlock extends HTMLElement{
     }
 
     setData(){
-
+        console.log(this.feature)
         this.name = this.feature.name;
+        this.uiName = this.feature.uiName;
         this.tag = this.feature.tag;
         // this.featureGroup = 
 
@@ -271,7 +271,7 @@ class FeatureBlock extends HTMLElement{
         this.appendChildren(this.checkbox, this.labelName, this.labelTag)
         this.checkbox.id = `${this.feature.tag}Box`;
 
-        this.labelName.textContent = this.name;
+        this.labelName.textContent = this.uiName||this.name;
         this.labelName.setAttributes({"for": `${this.feature.tag}Box`})
 
         this.labelTag.textContent = this.tag;
@@ -307,7 +307,6 @@ class ColorBlock extends HTMLElement{
     }
 
     setData(){
-        console.log(this.settings)
         this.colorCode = this.settings.defaultValue;
         this.css = this.settings.css
 
@@ -318,7 +317,6 @@ class ColorBlock extends HTMLElement{
     }
     connectedCallback(){
         this.setData()
-        console.log(this.name, this.colorCode)
         
         this.appendChildren(this.labelName, this.inputCode, this.inputColor)
 
@@ -422,7 +420,6 @@ export default class ControlBar extends HTMLElement{
     createChild(){
         this.removeChild()
         for (let i in this.controls.settings.toolBoxes){
-            console.log(this.controls.settings.toolBoxCheckers[i])
             if (!this.controls.settings.toolBoxCheckers[i]){continue;}
             const toolBox = document.createElement('tool-box');
             toolBox.settings = this.controls.settings;

@@ -274,6 +274,7 @@ function parseFont(file){
 function previewFont(file){
     const reader = new FileReader();
     reader.onload = (e)=>{
+        console.log(e.target.result)
         document.getElementById("uploadFont").innerHTML = "<style>@font-face{font-family: preview;src: url(" + e.target.result + ");}</style>"
     }
     console.log(file)

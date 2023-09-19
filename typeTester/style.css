@@ -362,6 +362,16 @@ input[type="checkbox"]{
     max-width: var(--btn-size);
 }
 input[type="checkbox"]:checked{
-    border: var(--border-1-5px) solid var(--color-bl);
     background-color: var(--color-bl);
 }
+@media not all and (min-resolution: .001dpcm)
+{ @supports(-webkit-appearance:none) and (stroke-color: transparent){
+    control-bar{
+        outline:none;
+        border: var(--border-2px) solid var(--color-bl);
+    }
+    input[type="checkbox"]{
+        outline:none;
+        border: var(--border-2px) solid var(--color-bl);
+    }
+}}

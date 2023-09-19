@@ -7,7 +7,7 @@
     --bgColor: White;
     --h1-size: 1.5rem;
     --h2-size: 1.2rem;
-    --h3-size: 1.1rem;
+    --h3-size: 1.0rem;
     --normal-size: 0.95rem;
     --small-size: 0.85rem;
     --color-bk: black;
@@ -161,7 +161,6 @@ toolbox-header select::before{
 .rangeHeader{
     justify-content: space-between;
     padding-bottom: 3px;
-    font-size:var(--h3-size)
 }
 .rangeHeader label span{
     font-size: var(--small-size);

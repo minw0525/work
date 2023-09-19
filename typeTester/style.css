@@ -205,10 +205,13 @@ color-block{
     align-items: center;
 }
 color-block *:nth-child(1){
-    flex: 1 0 30%;
+    flex: 1 1 50%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 color-block *:nth-child(2){
-    flex: 1 1 60%;
+    flex: 1 0 40%;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

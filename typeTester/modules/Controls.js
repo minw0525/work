@@ -201,7 +201,6 @@ class VariableInputRange extends HTMLElement{
             input.min = this.min;
             input.max = this.max;
             this.currentValue = this.default;
-            console.log(input, this.currentValue)
 
             input.step = this.max > 10 ? 1 : this.max > 1 ? 0.1 : 0.01;
 
@@ -311,7 +310,7 @@ class ColorBlock extends HTMLElement{
     setData(){
         this.colorCode = this.settings.defaultValue;
         this.css = this.settings.css
-
+        this.currentValue = this.settings.defaultValue;
         this.labelName.textContent = this.name;
         this.inputCode.value = this.colorCode;
         this.inputColor.value = this.colorCode;
@@ -322,13 +321,26 @@ class ColorBlock extends HTMLElement{
         
         this.appendChildren(this.labelName, this.inputCode, this.inputColor)
 
-        for (const input of this.inputs){
-            this.inputColor.addEventListener('input', (ev)=>{
-                this.currentValue = ev.target.value
-                input.value = this.currentValue
-                updateColor(this.css, this.currentValue)
-            })
-        }
+        this.inputColor.addEventListener('input', (ev)=>{
+            this.currentValue = ev.target.value
+            this.inputCode.value = this.currentValue.toUpperCase()
+            updateColor(this.css, this.currentValue)
+        })
+        this.inputCode.addEventListener('change', (ev)=>{
+            let temp;
+            if(!ev.target.value.startsWith('#')){
+                temp = parseInt(ev.target.value, 16)|| '000000'
+                temp = `#${temp.toString(16)}`
+
+            }else{
+                temp = parseInt(ev.target.value.slice(1,7),16) || 'ffffff'
+                temp = `#${temp.toString(16)}`
+            }
+            this.currentValue = temp.slice(0,7).toUpperCase().padEnd(7,'0')
+            this.inputCode.value = this.currentValue
+            this.inputColor.value = this.currentValue
+            updateColor(this.css, this.currentValue)
+        })
 
     }
 

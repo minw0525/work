@@ -80,6 +80,7 @@ main{
 #sandbox{
     border: none;
     outline: none;
+    font-weight: 900;
 }
 [contentEditable]{
     -webkit-user-modify: read-write-plaintext-only;

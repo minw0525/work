@@ -28,6 +28,7 @@
     --shade-7: #11f;
     --border-2px: 2px;
     --border-1-5px: 1.5px;
+    --btn-size: 22px;
 }
 *{
     margin: 0;
@@ -247,13 +248,13 @@ input[type=range] {
   }
   input[type=range]::-webkit-slider-thumb {
     border: var(--border-1-5px) solid var(--color-bl);
-    height: 22px;
-    width: 22px;
+    height: var(--btn-size);
+    width: var(--btn-size);
     border-radius: 35px;
     background: var(--color-wt);
     cursor: pointer;
     -webkit-appearance: none;
-    margin-top: -11px;
+    margin-top: calc(var(--btn-size)/-2);
   }
   input[type=range]:focus::-webkit-slider-runnable-track {
     background: var(--color-bl);
@@ -269,8 +270,8 @@ input[type=range] {
   }
   input[type=range]::-moz-range-thumb {
     border: var(--border-1-5px) solid var(--color-bl);
-    height: 22px;
-    width: 22px;
+    height: var(--btn-size);
+    width: var(--btn-size);
     border-radius: 35px;
     background: var(--color-wt);
     cursor: pointer;
@@ -297,8 +298,8 @@ input[type=range] {
   input[type=range]::-ms-thumb {
     margin-top: var(--border-2px);
     border: var(--border-1-5px) solid var(--color-bl);
-    height: 22px;
-    width: 22px;
+    height: var(--btn-size);
+    width: var(--btn-size);
     border-radius: 35px;
     background: var(--color-wt);
     cursor: pointer;
@@ -322,15 +323,16 @@ input[type=text]:focus{
     background-color: var(--shade-1);
 }
 input[type="color"] {
+    box-sizing: content-box;
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
     background: none;
     border: 0;
     cursor: pointer;
-    height: 24px;
+    height: var(--btn-size);
     padding: 0;
-    max-width: 24px;
+    max-width: var(--btn-size);
   }
 
   ::-webkit-color-swatch-wrapper {
@@ -339,7 +341,7 @@ input[type="color"] {
   
   ::-webkit-color-swatch{
     border: var(--border-1-5px) solid var(--color-bl);
-    border-radius: 12px;
+    border-radius: calc(var(--btn-size)/2);
   }
   
   ::-moz-color-swatch,
@@ -355,6 +357,9 @@ input[type="checkbox"]{
     appearance: none;
     outline: var(--color-bl) 1px solid;
     border-radius: 50%;
+    height: var(--btn-size);
+    min-width: var(--btn-size);
+    max-width: var(--btn-size);
 }
 input[type="checkbox"]:checked{
     border: var(--border-1-5px) solid var(--color-bl);

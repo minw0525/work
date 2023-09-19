@@ -8,7 +8,7 @@ export default class Font {
         this.fileName = fileName;
         this.font = font;
         this.platform = (()=>{
-            const platform = (navigator.userAgentData?.platform)?.toLowerCase();
+            const platform = (navigator.userAgentData?.platform||navigator.platform).toLowerCase();
             if(platform.startsWith("Mac")) return "macintosh";
             return "windows";
             })()

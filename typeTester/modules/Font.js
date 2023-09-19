@@ -36,7 +36,6 @@ export default class Font {
               reader.onloadend = function () {
                 // console.log(`FILEREADER RESULT ${reader.result}`);
                 _this.url = reader.result;
-                console.log(_this);
               //   file.url = reader.result;
               };
             // });
@@ -122,7 +121,7 @@ export default class Font {
         this.variationAxes = font && font.tables.fvar && font.tables.fvar.axes;
         }
 
-        console.log(this.gposFeatures, this.gsubFeatures, this.variationAxes)
+        // console.log(this.gposFeatures, this.gsubFeatures, this.variationAxes)
     }
     getPresets(){
         const font = this.font;

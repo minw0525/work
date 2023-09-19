@@ -71,7 +71,6 @@ const setFontFace = (fontFace)=>{
 const parseFont = async (fontFile)=>{
     try {
         const opentypeFont = opentype.parse(await fontFile.arrayBuffer())
-        console.log(opentypeFont)
         return opentypeFont
     } catch (error) {
         showErrorMessage(error)

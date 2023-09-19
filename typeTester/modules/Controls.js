@@ -48,7 +48,6 @@ function updateFeatureCSS(prop, val){
     cssSettings["font-feature-settings"] = newFeaSetting
 }
 function updateColor(prop, val){
-    console.log(prop, val)
     mainEl.style[prop] = val
 }
 
@@ -257,7 +256,6 @@ class FeatureBlock extends HTMLElement{
     }
 
     setData(){
-        console.log(this.feature)
         this.name = this.feature.name;
         this.uiName = this.feature.uiName;
         this.tag = this.feature.tag;

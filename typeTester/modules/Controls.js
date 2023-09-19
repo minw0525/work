@@ -60,7 +60,7 @@ class ToolboxHeader extends HTMLElement{
         this.createNodes()
     }
     createNodes(){
-        this.familyEl = document.createElement('h2')
+        this.familyEl = document.createElement('h1')
         this.instancesSelect = document.createElement('select')
         this.appendChildren(this.familyEl, this.instancesSelect)
 
@@ -118,11 +118,12 @@ class InputRange extends HTMLElement{
             input.min = this.settings.min;
             input.max = this.settings.max;
             this.currentValue = this.settings.default;
-            input.defaultValue = this.currentValue;
+            input.step = this.settings.step;
+
+            input.value = this.currentValue;
             updateFontCSS(this.settings.css,`${this.currentValue}${this.settings.unit??''}`)
 
 
-            input.step = this.settings.step;
 
             input.addEventListener('input', (ev)=>{
                 if (ev.target.value < _this.settings.min){
@@ -194,15 +195,19 @@ class VariableInputRange extends HTMLElement{
     }
     connectedCallback(){
         this.setData()
+        const _this = this
 
         for (const input of this.inputs){
             input.min = this.min;
             input.max = this.max;
             this.currentValue = this.default;
-            input.defaultValue = this.currentValue;
-            updateVariationCSS(this.tag,`${this.currentValue}`)
+            console.log(input, this.currentValue)
 
             input.step = this.max > 10 ? 1 : this.max > 1 ? 0.1 : 0.01;
+
+            input.value =  this.currentValue;
+            updateVariationCSS(this.tag,`${this.currentValue}`)
+
 
             input.addEventListener('input', (ev)=>{
                 if (ev.target.value < _this.min){
@@ -237,7 +242,6 @@ class VariableInputRange extends HTMLElement{
         this.labelName.textContent = this.name;
         this.labelName.appendChild(this.labelTag)
         this.labelTag.textContent = this.tag;
-        const _this = this
 
     }
 
@@ -451,7 +455,7 @@ class Settings{
             toolBoxCheckers : [true, true, this.variationAxes[0], this.featureLists[0],  true],
             basicControls : {
                 "Size": {min: 10, max:300, default:100, step:1, css: "fontSize", unit:"px"}, 
-                "Line height": {min: 0, max:2, default:1, step:0.01, css: "lineHeight"}, 
+                "Line height": {min: 0, max:2, default:1.2, step:0.01, css: "lineHeight"}, 
                 "Letter spacing": {min: -1, max:1, default:0, step:0.01, css: "letterSpacing", unit:"rem"}
             },
             capTags: ["smcp", "c2sc", "pcap", "c2pc"],

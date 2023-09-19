@@ -390,27 +390,5 @@ input[type="checkbox"]:checked{
         outline:none;
         border: var(--border-2px) solid var(--color-bl);
     }
-
-    @container body (max-width: 768px) {
-        *::-webkit-scrollbar-track {
-            /* border-bottom-right-radius: 0.5em; */
-            border-bottom: none;
-        }
-        main{
-            flex-direction: column-reverse;
-        }
-        #dropzone{
-            flex: 60vh;
-        }
-        control-bar{
-            flex: 40vh;
-            border-top: none;
-            border-top-left-radius:0;
-            margin: 0 10px;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-        }
-        
-    }
     
 }}

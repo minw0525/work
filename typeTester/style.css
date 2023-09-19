@@ -1,7 +1,7 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 :root{
-    --font-family: "covik-sans-mono", "Pretendard", "Apple SD Gothic" ,"Arial", sans-serif;
+    --font-family: "covik-sans", "Pretendard", "Apple SD Gothic" ,"Arial", sans-serif;
     --font-size: calc(1vh + 7px);
     --color: black;
     --bgColor: White;
@@ -172,6 +172,7 @@ toolbox-header select::before{
 }
 .sliderLabel{
     font-size: var(--normal-size);
+    font-family: "covik-sans-mono";
     width: 3rem;
     height: 1.4rem;
     text-align:right;

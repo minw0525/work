@@ -47,6 +47,7 @@ const displayFontData = (font)=>{
         mainEl.appendChild(controlsUI)
 
         sandbox.style.fontFamily = "preview, sans-serif";
+        sandbox.style.fontWeight = "unset";
 
         return
     }

@@ -75,8 +75,6 @@ class ToolboxHeader extends HTMLElement{
         this.appendChildren(this.familyEl, this.instancesSelect)
         this.instancesSelect.addEventListener('change', this.changeHandler.bind(this))
 
-        console.log(this.controls.font.presets)
-
         this.instancesSelect.innerHTML = ''
 
         if(!this.presets.length){
@@ -100,7 +98,6 @@ class ToolboxHeader extends HTMLElement{
     }
 
     updateUI(){
-        console.log(this.currentState[this.prop])
         this.familyEl.textContent = this.family;
         if(this.controls.currentState[this.prop].coordinates){
             this.controls.settings.updateInstance()
@@ -155,8 +152,7 @@ class InputRange extends HTMLElement{
     initializeUI(){
         this.appendChildren(this.header, this.inputRange, this.datalist)
         this.label.textContent = this.name;
-
-        this.currentState[this.prop] = this.default;
+        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop][0] :this.default;
 
         for (const input of this.inputs){
             input.min = this.min;
@@ -243,7 +239,7 @@ class VariableInputRange extends HTMLElement{
         this.labelName.textContent = this.name;
         this.labelTag.textContent = this.tag;
 
-        this.currentState[this.prop] = this.default;
+        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop]:this.default;
 
         for (const input of this.inputs){
             input.min = this.min;
@@ -322,12 +318,12 @@ class FeatureBlock extends HTMLElement{
             this.checkbox.checked = true;
         }
 
-        this.currentState[this.prop] = this.checkbox.checked
+        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop] : this.checkbox.checked
 
         this.checkbox.id = `${this.prop}Box`;
 
         this.labelName.textContent = this.uiName||this.name;
-        this.labelName.setAttributes({"for": `${this.feature.prop}Box`})
+        this.labelName.setAttributes({"for": `${this.prop}Box`})
 
         this.labelTag.textContent = this.prop;
 
@@ -338,10 +334,11 @@ class FeatureBlock extends HTMLElement{
         this.updateUI()
     }
     updateUI(){
+        this.checkbox.checked = this.controls.currentState[this.prop]
         updateFeatureCSS(this.prop, this.controls.currentState[this.prop])
     }
     changeHandler(ev){
-        this.currentState[this.prop] = this.checkbox.checked;
+        this.currentState[this.prop] = ev.target.checked;
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
@@ -381,7 +378,7 @@ class ColorBlock extends HTMLElement{
         this.inputColor.addEventListener('input', this.inputHandler.bind(this));
         this.inputCode.addEventListener('change', this.changeHandler.bind(this));
         this.labelName.textContent = this.name;
-        this.currentState[this.prop] = `#${this.default}`;
+        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop]: `#${this.default}`;
 
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
@@ -429,11 +426,19 @@ class ToolBox extends HTMLElement{
     constructor(){
         super()
         this.label = document.createElement('label');
-
+        this.appendChild(this.label)
     }
     connectedCallback(){
         this.setData();
-        this.appendChild(this.label)
+        this.initializeUI()
+    }
+    setData(){
+        this.font = this.controls.font
+        this.settings = this.controls.settings;
+        this.label.textContent = this.name;
+        this.label.classList.add('toolBoxName');
+    }
+    initializeUI(){
         switch (this.label.textContent) {
             case this.settings.toolBoxes[0]: 
                 this.buildInstanceSelector()
@@ -453,12 +458,6 @@ class ToolBox extends HTMLElement{
             default:
                 break;
         }
-    }
-    setData(){
-        this.font = this.controls.font
-        this.settings = this.controls.settings;
-        this.label.textContent = this.name;
-        this.label.classList.add('toolBoxName');
     }
     buildInstanceSelector(){
         const toolboxHeader = document.createElement('toolbox-header')
@@ -508,6 +507,9 @@ class ToolBox extends HTMLElement{
 export default class ControlBar extends HTMLElement{
     constructor(){
         super()
+        this.font = currentFont
+        this.controls = new Controls(this.font);
+        this.controls.parent = this;
     }
     connectedCallback(){
         this.updateFont()
@@ -518,15 +520,15 @@ export default class ControlBar extends HTMLElement{
     }
     setData(){
         this.font = currentFont
-        const controls = new Controls(this.font);
-        this.controls = controls;
-        this.controls.parent = this;
+        this.controls.updateData(currentFont)
     }
     initializeUI(){
         this.removeChild()
         for (let i in this.controls.settings.toolBoxes){
-            if (!this.controls.settings.toolBoxCheckers[i]){continue;}
-            const toolBox = document.createElement('tool-box');
+            if (!this.controls.settings.toolBoxCheckers[i]){
+                continue;
+            }
+            const toolBox = new ToolBox() ;
             toolBox.controls = this.controls;
             toolBox.name = this.controls.settings.toolBoxes[i];
             this.appendChild(toolBox);
@@ -535,15 +537,16 @@ export default class ControlBar extends HTMLElement{
     removeChild(){
         this.innerHTML= ''
     }
-    createUI(){
-        const controlsUI = document.createElement('control-bar')
-        return controlsUI
-    }
 }
 
 class Controls{
     constructor(opentypeFont){
-        console.log(opentypeFont)
+        this.font = opentypeFont
+        this.updateData(opentypeFont)
+        this.currentState = {};
+    }
+    updateData(opentypeFont){
+        console.trace(opentypeFont)
         const _this = this;
         this.font = opentypeFont;
         this.fileName = opentypeFont.fileName;
@@ -551,7 +554,6 @@ class Controls{
         this.gsubFeatures = this.font.gsubFeatures;
         this.gposFeatures = this.font.gposFeatures;
         this.featureLists = [this.font.gsubFeatures].concat([this.font.gposFeatures]).flatMap(e=>e);
-        this.currentState = {};
         this.settings = {
             // textKinds,
             featureLists : this.featureLists,
@@ -607,7 +609,6 @@ class Controls{
             }
         }
     }
-
 }
 
 window.customElements.define('toolbox-header', ToolboxHeader)

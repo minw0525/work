@@ -42,9 +42,8 @@ const getFileURL = (fontFile)=>{
 const displayFontData = (font)=>{
 
     if(!mainEl.querySelector('control-bar')){
-        const controlBar = new ControlBar(sandbox)
-        const controlsUI = controlBar.createUI()
-        mainEl.appendChild(controlsUI)
+        const controlBar = new ControlBar()
+        mainEl.appendChild(controlBar)
 
         sandbox.style.fontFamily = "preview, sans-serif";
         sandbox.style.fontWeight = "unset";
@@ -65,7 +64,6 @@ const setFontFace = (fontFace)=>{
         preview.replaceChildren(newStyle)
         return
     }
-
     preview.appendChild(newStyle);
 }
 

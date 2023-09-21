@@ -63,7 +63,6 @@ class ToolboxHeader extends HTMLElement{
         this.currentState = {}
     }
     connectedCallback(){
-        console.log(this.controls)
         this.setData()
         this.initializeUI()
     }
@@ -181,7 +180,6 @@ class InputRange extends HTMLElement{
     updateUI(){
         for (const input of this.inputs){
             input.value = this.controls.currentState[this.prop][0];
-            console.log(this.controls.currentState[this.prop]);
         }
         updateFontCSS(this.prop,`${this.controls.currentState[this.prop][0]}${this.controls.currentState[this.prop][1]}`);
     }
@@ -272,7 +270,6 @@ class VariableInputRange extends HTMLElement{
             input.value = this.controls.currentState[this.prop];
             // console.log(this.controls.currentState[this.prop]);
         }
-        console.log(this.prop, this.controls.currentState[this.prop])
         updateVariationCSS(this.prop, this.controls.currentState[this.prop]);
     }
     inputHandler(ev){
@@ -404,12 +401,10 @@ class ColorBlock extends HTMLElement{
         if(!ev.target.value.startsWith('#')){
             temp = parseInt(checkIf3letters(ev.target.value), 16) || this.default;
             temp = `#${temp.toString(16)}`
-            console.log(temp)
 
         }else{
             console.log(ev.target.value)
             temp = parseInt(checkIf3letters(ev.target.value.slice(1)),16) || this.default;
-            console.log(temp)
             temp = `#${temp.toString(16)}`
         }
         this.currentState[this.prop] = temp.slice(0,7).toUpperCase().padEnd(7,'0')
@@ -598,7 +593,6 @@ class Controls{
             allPlaying: false,
             easing: '',
             updateInstance(){
-                console.log(_this.currentState.instance)
                 const coordinates = _this.currentState.instance.coordinates;
 
                 for (const [axis, value] of Object.entries(coordinates)){

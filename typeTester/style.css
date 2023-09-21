@@ -146,13 +146,7 @@ toolbox-header select option{
 }
 toolbox-header select:disabled{
     background-color: var(--shade-1);
-}
-toolbox-header select::before{
-    content:"";
-    display: block;
-    width: 5px;
-    height: 5px;
-    background-color: var(--color-bl);
+    color: var(--shade-7);
 }
 .toolBoxName{
     font-size: var(--h2-size);

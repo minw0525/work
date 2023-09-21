@@ -3,8 +3,6 @@ import featureDefaults from "./opentypeFeatureDefaults.js";
 const sandbox = document.getElementById('sandbox')
 const mainEl = document.getElementById('content')
 
-let settings; 
-
 const cssSettings = new Proxy({}, {
     set(target, prop, val){
         target[prop] = val;
@@ -15,8 +13,11 @@ const cssSettings = new Proxy({}, {
         const varCssString = varCssStringRaw.replaceAll(':',' ').slice(1,-1)
         const feaCssString = feaCssStringRaw.replaceAll('""','').replaceAll(':',' ').slice(1,-1)
 
-        for (const [key, value] of Object.entries(cssSettings.font)){
-            sandbox.style[key] = value
+
+        if(cssSettings.font){
+            for (const [key, value] of Object.entries(cssSettings.font)){
+                sandbox.style[key] = value
+            }
         }
         sandbox.style.fontVariationSettings = varCssString;
         sandbox.style.fontFeatureSettings = feaCssString;
@@ -54,32 +55,64 @@ function updateColor(prop, val){
 class ToolboxHeader extends HTMLElement{
     constructor(){
         super()
-    }
-    connectedCallback(){
-        this.setData()
-        this.createNodes()
-    }
-    createNodes(){
         this.familyEl = document.createElement('h1')
         this.instancesSelect = document.createElement('select')
-        this.appendChildren(this.familyEl, this.instancesSelect)
+        
+        this.prop = 'instance'
 
-        this.familyEl.textContent = this.family
-
-        if(!this.presets.length){
-            this.instancesSelect.disabled = true;
-            this.presets.unshift({name:{en:'-'}})
-        }
-        for(const instance of this.presets){
-            const option = document.createElement('option');
-            option.textContent = instance.name.en;
-            option.value = instance.name.en;
-            this.instancesSelect.appendChild(option)
-        }
+        this.currentState = {}
+    }
+    connectedCallback(){
+        console.log(this.controls)
+        this.setData()
+        this.initializeUI()
     }
     setData(){
-        this.family = settings.font.family
-        this.presets = settings.font.presets
+        this.family = this.controls.font.family;
+        this.presets = this.controls.font.presets;
+        this.styleName = this.controls.font.style;
+    }
+    initializeUI(){
+        this.appendChildren(this.familyEl, this.instancesSelect)
+        this.instancesSelect.addEventListener('change', this.changeHandler.bind(this))
+
+        this.currentState[this.prop] = (()=>{
+            for(const idx in this.presets){
+                if (this.presets[idx].name.en === this.styleName) {
+                    this.optIdx = idx
+                    return this.presets[idx]
+                };
+            }
+        })()
+
+        this.instancesSelect.innerHTML = ''
+        for(const idx in this.presets){
+            const option = document.createElement('option');
+            option.textContent = this.presets[idx].name.en;
+            option.value = idx;
+            this.instancesSelect.appendChild(option)
+        }
+        if(!this.presets.length){
+            this.instancesSelect.disabled = true;
+            this.presets.unshift({"name":{"en": this.styleName}})
+        }
+        
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+
+    updateUI(){
+        this.familyEl.textContent = this.controls.currentState[this.prop].name.en;
+        this.controls.settings.updateInstance()
+    }
+    changeHandler(ev){
+        this.currentState[this.prop] = this.presets[ev.target.value]
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+
+    updateState(prop, value){
+        this.controls.currentState[prop] = value;
     }
 }
 
@@ -87,15 +120,11 @@ class ToolboxHeader extends HTMLElement{
 class InputRange extends HTMLElement{
     constructor(){
         super()
-        this.settings = []
-        this.name = ''
-        this.currentValue;
-        this.snaps = []
-
         this.header = document.createElement('div')
         this.label = document.createElement('label')
         this.inputText = document.createElement('input')
         this.inputRange = document.createElement('input')
+        this.datalist = document.createElement('datalist')
 
         this.inputs = [this.inputRange, this.inputText]
 
@@ -104,48 +133,41 @@ class InputRange extends HTMLElement{
         this.inputText.classList.add("sliderLabel")
         this.inputRange.setAttributes({'type':'range', 'list':'inputSnaps'})
         this.inputText.setAttributes({"type": "text", "inputmode":"decimal", "number":"true", "autocomplete":"off"})
-        
-    }
-    setData(){
 
-        
+        this.header.appendChildren(this.label, this.inputText)
+
+        this.currentState = {}
     }
     connectedCallback(){
         this.setData()
-        const _this = this
+        this.initializeUI()
+    }
+    setData(){
+        this.min = this.data.min;
+        this.max = this.data.max;
+        this.default = this.data.default;
+        this.step = this.data.step;
+        this.prop = this.data.prop;
+        this.unit = this.data.unit??'';
+    }
+
+    initializeUI(){
+        this.appendChildren(this.header, this.inputRange, this.datalist)
+        this.label.textContent = this.name;
+
+        this.currentState[this.prop] = this.default;
 
         for (const input of this.inputs){
-            input.min = this.settings.min;
-            input.max = this.settings.max;
-            this.currentValue = this.settings.default;
-            input.step = this.settings.step;
-
-            input.value = this.currentValue;
-            updateFontCSS(this.settings.css,`${this.currentValue}${this.settings.unit??''}`)
-
-
-
-            input.addEventListener('input', (ev)=>{
-                if (ev.target.value < _this.settings.min){
-                    _this.currentValue = _this.settings.min
-                    console.log('lower than min')
-                }else if (ev.target.value > _this.settings.max){
-                    _this.currentValue = _this.settings.max
-                    console.log('higher than max')
-                }else{
-                    _this.currentValue = ev.target.value
-                }
-                for (const input of _this.inputs){
-                    input.value = _this.currentValue
-                }
-                updateFontCSS(_this.settings.css,`${_this.currentValue}${_this.settings.unit??''}`)
-            })
+            input.min = this.min;
+            input.max = this.max;
+            input.step = this.step;
+            input.value = this.default;
+            input.addEventListener('input', this.inputHandler.bind(this))
         }
-        
-        this.snaps = [this.settings.min, this.settings.default, this.settings.max]
-        this.datalist = document.createElement('datalist')
-        this.datalist.id = `${this.settings.css}Snaps`
-        this.inputRange.setAttributes({'list':`${this.settings.css}Snaps`})
+
+        this.snaps = [this.data.min, this.data.default, this.data.max]
+        this.datalist.id = `${this.prop}Snaps`
+        this.inputRange.setAttributes({'list':`${this.prop}Snaps`})
 
         for (const snap of this.snaps){
             const option = document.createElement('option')
@@ -153,27 +175,44 @@ class InputRange extends HTMLElement{
             this.datalist.appendChild(option)
         }
 
-        this.appendChildren(this.header, this.inputRange, this.datalist)
-        this.header.appendChildren(this.label, this.inputText)
-        this.label.textContent = this.name;
-
+        this.updateState(this.prop, [ this.currentState[this.prop], this.unit??''])
+        this.updateUI()
+    }
+    updateUI(){
+        for (const input of this.inputs){
+            input.value = this.controls.currentState[this.prop][0];
+            console.log(this.controls.currentState[this.prop]);
+        }
+        updateFontCSS(this.prop,`${this.controls.currentState[this.prop][0]}${this.controls.currentState[this.prop][1]}`);
     }
 
+    inputHandler(ev){
+        if (ev.target.value < this.min){
+            this.currentState[this.prop] = this.min
+        }else if (ev.target.value > this.max){
+            this.currentState[this.prop] = this.max
+        }else{
+            this.currentState[this.prop] = ev.target.value
+        }
+        this.updateState(this.prop, [ this.currentState[this.prop], this.unit??''])
+        this.updateUI()
+    }
+
+    updateState(prop, value){
+        this.controls.currentState[prop] = value;
+    }
+    
 }
+
 class VariableInputRange extends HTMLElement{
     constructor(){
         super()
-
-        this.settings = []
-        this.name = ''
-        this.currentValue;
-        this.snaps = []
-
         this.header = document.createElement('div')
         this.labelName = document.createElement('label')
         this.labelTag = document.createElement('span')
         this.inputText = document.createElement('input')
         this.inputRange = document.createElement('input')
+        this.datalist = document.createElement('datalist')
 
         this.inputs = [this.inputRange, this.inputText]
 
@@ -183,65 +222,72 @@ class VariableInputRange extends HTMLElement{
         this.inputRange.setAttributes({'type':'range', 'list':'inputSnaps'})
         this.inputText.setAttributes({"type": "text", "inputmode":"decimal", "number":"true", "autocomplete":"off"})
         
-    
+        this.header.appendChildren(this.labelName, this.inputText)
+        this.labelName.appendChild(this.labelTag)
+
+        this.currentState = {}
+    }
+    connectedCallback(){
+        this.setData()
+        this.initializeUI()
     }
     setData(){
-        this.tag = this.axis.tag;
         this.name = this.axis.name.en||this.tag;
         this.min = this.axis.minValue;
         this.max = this.axis.maxValue;
         this.default = Math.round(this.axis.defaultValue * 100) / 100;
-
+        this.prop = this.axis.tag;
     }
-    connectedCallback(){
-        this.setData()
-        const _this = this
+    initializeUI(){
+        this.appendChildren(this.header, this.inputRange, this.datalist)
+        this.labelName.textContent = this.name;
+        this.labelTag.textContent = this.tag;
+
+        this.currentState[this.prop] = this.default;
 
         for (const input of this.inputs){
             input.min = this.min;
             input.max = this.max;
-            this.currentValue = this.default;
-
             input.step = this.max > 10 ? 1 : this.max > 1 ? 0.1 : 0.01;
+            input.value = this.default;
 
-            input.value =  this.currentValue;
-            updateVariationCSS(this.tag,`${this.currentValue}`)
-
-
-            input.addEventListener('input', (ev)=>{
-                if (ev.target.value < _this.min){
-                    _this.currentValue = _this.min
-                    console.log('lower than min')
-                }else if (ev.target.value > _this.max){
-                    _this.currentValue = _this.max
-                    console.log('higher than max')
-                }else{
-                    _this.currentValue = ev.target.value
-                }
-                for (const input of _this.inputs){
-                    input.value = _this.currentValue
-                }
-                updateVariationCSS(this.tag,`${this.currentValue}`)
-            })
-
+            input.addEventListener('input', this.inputHandler.bind(this))
+            
+            input.classList.add(`${this.prop}input`)
         }
         this.snaps = [this.min, this.default, this.max]
-        this.datalist = document.createElement('datalist')
-        this.datalist.id = `${this.tag}Snaps`
-        this.inputRange.setAttributes({'list':`${this.tag}Snaps`})
+        this.datalist.id = `${this.prop}Snaps`
+        this.inputRange.setAttributes({'list':`${this.prop}Snaps`})
 
         for (const snap of this.snaps){
             const option = document.createElement('option')
             option.textContent = snap
             this.datalist.appendChild(option)
         }
-
-        this.appendChildren(this.header, this.inputRange, this.datalist)
-        this.header.appendChildren(this.labelName, this.inputText)
-        this.labelName.textContent = this.name;
-        this.labelName.appendChild(this.labelTag)
-        this.labelTag.textContent = this.tag;
-
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+    updateUI(){
+        for (const input of this.inputs){
+            input.value = this.controls.currentState[this.prop];
+            // console.log(this.controls.currentState[this.prop]);
+        }
+        console.log(this.prop, this.controls.currentState[this.prop])
+        updateVariationCSS(this.prop, this.controls.currentState[this.prop]);
+    }
+    inputHandler(ev){
+        if (ev.target.value < this.min){
+            this.currentState[this.prop] = this.min
+        }else if (ev.target.value > this.max){
+            this.currentState[this.prop] = this.max
+        }else{
+            this.currentState[this.prop] = ev.target.value
+        }
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+    updateState(prop, value){
+        this.controls.currentState[prop] = value;
     }
 
 }
@@ -255,41 +301,54 @@ class FeatureBlock extends HTMLElement{
         this.labelTag = document.createElement('span')
 
         this.checkbox.setAttributes({"type": "checkbox"})
+        this.labelTag.classList.add('sliderLabel')
 
+        this.currentState = {}
     }
-
+    connectedCallback(){
+        this.setData()
+        this.initializeUI()
+    }
     setData(){
         this.name = this.feature.name;
         this.uiName = this.feature.uiName;
-        this.tag = this.feature.tag;
+        this.prop = this.feature.tag;
         // this.featureGroup = 
 
     }
-
-    connectedCallback(){
-        this.setData()
-
+    initializeUI(){
         this.appendChildren(this.checkbox, this.labelName, this.labelTag)
-        this.checkbox.id = `${this.feature.tag}Box`;
 
-        this.labelName.textContent = this.uiName||this.name;
-        this.labelName.setAttributes({"for": `${this.feature.tag}Box`})
-
-        this.labelTag.textContent = this.tag;
-        this.labelTag.classList.add('sliderLabel')
-
-        if (featureDefaults.indexOf(this.tag )>-1){
+        if (featureDefaults.indexOf(this.prop )>-1){
             this.checkbox.checked = true;
         }
 
-        updateFeatureCSS(this.tag, this.checkbox.checked)
+        this.currentState[this.prop] = this.checkbox.checked
 
-        this.checkbox.addEventListener('change', (ev)=>{
-            updateFeatureCSS(this.tag, this.checkbox.checked)
-        })
+        this.checkbox.id = `${this.prop}Box`;
 
+        this.labelName.textContent = this.uiName||this.name;
+        this.labelName.setAttributes({"for": `${this.feature.prop}Box`})
+
+        this.labelTag.textContent = this.prop;
+
+
+        this.checkbox.addEventListener('change', this.changeHandler.bind(this))
+
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
     }
-
+    updateUI(){
+        updateFeatureCSS(this.prop, this.controls.currentState[this.prop])
+    }
+    changeHandler(ev){
+        this.currentState[this.prop] = this.checkbox.checked;
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+    updateState(prop, value){
+        this.controls.currentState[prop] = value;
+    }
 }
 
 class ColorBlock extends HTMLElement{
@@ -299,61 +358,84 @@ class ColorBlock extends HTMLElement{
         this.labelName = document.createElement('label')
         this.inputCode = document.createElement('input')
         this.inputColor = document.createElement('input')
+
         this.inputs = [this.inputCode, this.inputColor]
+
         this.inputCode.setAttributes({"type": "text"})
         this.inputColor.setAttributes({"type": "color"})
         this.inputCode.classList.add("sliderLabel")
-        this.currentValue = ''
-
-    }
-
-    setData(){
-        this.colorCode = this.settings.defaultValue;
-        this.css = this.settings.css
-        this.currentValue = this.settings.defaultValue;
-        this.labelName.textContent = this.name;
-        this.inputCode.value = this.colorCode;
-        this.inputColor.value = this.colorCode;
+        
+        this.currentState = {}
 
     }
     connectedCallback(){
         this.setData()
-        
-        this.appendChildren(this.labelName, this.inputCode, this.inputColor)
-
-        this.inputColor.addEventListener('input', (ev)=>{
-            this.currentValue = ev.target.value
-            this.inputCode.value = this.currentValue.toUpperCase()
-            updateColor(this.css, this.currentValue)
-        })
-        this.inputCode.addEventListener('change', (ev)=>{
-            let temp;
-            if(!ev.target.value.startsWith('#')){
-                temp = parseInt(ev.target.value, 16)|| '000000'
-                temp = `#${temp.toString(16)}`
-
-            }else{
-                temp = parseInt(ev.target.value.slice(1,7),16) || 'ffffff'
-                temp = `#${temp.toString(16)}`
-            }
-            this.currentValue = temp.slice(0,7).toUpperCase().padEnd(7,'0')
-            this.inputCode.value = this.currentValue
-            this.inputColor.value = this.currentValue
-            updateColor(this.css, this.currentValue)
-        })
-
+        this.initializeUI()
     }
+    setData(){
+        this.colorCode = this.data.defaultValue;
+        this.prop = this.data.prop;
+        this.default = this.data.defaultValue;
+    }
+    initializeUI(){
+        this.appendChildren(this.labelName, this.inputCode, this.inputColor)
+        this.inputColor.addEventListener('input', this.inputHandler.bind(this));
+        this.inputCode.addEventListener('change', this.changeHandler.bind(this));
+        this.labelName.textContent = this.name;
+        this.currentState[this.prop] = `#${this.default}`;
 
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+    updateUI(){
+        this.inputCode.value = this.controls.currentState[this.prop];
+        this.inputColor.value = this.controls.currentState[this.prop];
+
+        updateColor(this.prop, this.controls.currentState[this.prop])
+    }
+    inputHandler(ev){
+        this.currentState[this.prop] = ev.target.value.toUpperCase()
+
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+    }
+    changeHandler(ev){
+        let temp;
+        if(!ev.target.value.startsWith('#')){
+            temp = parseInt(checkIf3letters(ev.target.value), 16) || this.default;
+            temp = `#${temp.toString(16)}`
+            console.log(temp)
+
+        }else{
+            console.log(ev.target.value)
+            temp = parseInt(checkIf3letters(ev.target.value.slice(1)),16) || this.default;
+            console.log(temp)
+            temp = `#${temp.toString(16)}`
+        }
+        this.currentState[this.prop] = temp.slice(0,7).toUpperCase().padEnd(7,'0')
+
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
+
+        function checkIf3letters(str){
+            if (str.length === 3){
+                return str.split('').flatMap(e=>[e,e]).join('')
+            }else{ return str }
+        }
+    }
+    updateState(prop, value){
+        this.controls.currentState[prop] = value;
+    }
 }
 
 class ToolBox extends HTMLElement{
     constructor(){
         super()
-        this.font = settings.font
         this.label = document.createElement('label');
-        this.settings = []
+
     }
     connectedCallback(){
+        this.setData();
         this.appendChild(this.label)
         switch (this.label.textContent) {
             case this.settings.toolBoxes[0]: 
@@ -375,17 +457,24 @@ class ToolBox extends HTMLElement{
                 break;
         }
     }
+    setData(){
+        this.font = this.controls.font
+        this.settings = this.controls.settings;
+        this.label.textContent = this.name;
+        this.label.classList.add('toolBoxName');
+    }
     buildInstanceSelector(){
         const toolboxHeader = document.createElement('toolbox-header')
+        toolboxHeader.controls = this.controls
         this.appendChild(toolboxHeader)
-
     }
 
     buildBasicControls(){
         for(const [key, value] of Object.entries(this.settings.basicControls)){
             const inputRange = document.createElement('input-range')
             inputRange.name = key
-            inputRange.settings = value
+            inputRange.data = value
+            inputRange.controls = this.controls
             this.appendChild(inputRange)
         }
     }
@@ -394,6 +483,7 @@ class ToolBox extends HTMLElement{
         for(const axis of Object.values(this.font.variationAxes)){
             const variableInputRange = document.createElement('variableinput-range')
             variableInputRange.axis = axis
+            variableInputRange.controls = this.controls
             this.appendChild(variableInputRange)
         }
     }
@@ -402,14 +492,16 @@ class ToolBox extends HTMLElement{
         for(const feature of this.settings.featureLists){
             const featureBlock = document.createElement('feature-block')
             featureBlock.feature = feature
+            featureBlock.controls = this.controls
             this.appendChild(featureBlock)
         }
     }
     buildColorControls(){
-        for (const [key, value]  of Object.entries(this.settings.colorCss)){
+        for (const [key, value]  of Object.entries(this.settings.colorData)){
             const colorBlock = document.createElement('color-block')
             colorBlock.name = key
-            colorBlock.settings = value
+            colorBlock.data = value
+            colorBlock.controls = this.controls
             this.appendChild(colorBlock)
         }
     }
@@ -425,20 +517,21 @@ export default class ControlBar extends HTMLElement{
     }
     updateFont(){
         this.setData()
-        this.createChild()
+        this.initializeUI()
     }
     setData(){
-        settings = new Settings(currentFont);
-        this.controls = settings
+        this.font = currentFont
+        const controls = new Controls(this.font);
+        this.controls = controls;
+        this.controls.parent = this;
     }
-    createChild(){
+    initializeUI(){
         this.removeChild()
         for (let i in this.controls.settings.toolBoxes){
             if (!this.controls.settings.toolBoxCheckers[i]){continue;}
             const toolBox = document.createElement('tool-box');
-            toolBox.settings = this.controls.settings;
-            toolBox.label.textContent = this.controls.settings.toolBoxes[i];
-            toolBox.label.classList.add('toolBoxName');
+            toolBox.controls = this.controls;
+            toolBox.name = this.controls.settings.toolBoxes[i];
             this.appendChild(toolBox);
         }
     }
@@ -451,24 +544,26 @@ export default class ControlBar extends HTMLElement{
     }
 }
 
-class Settings{
+class Controls{
     constructor(opentypeFont){
         console.log(opentypeFont)
+        const _this = this;
         this.font = opentypeFont;
         this.fileName = opentypeFont.fileName;
         this.variationAxes = this.font.variationAxes;
         this.gsubFeatures = this.font.gsubFeatures;
         this.gposFeatures = this.font.gposFeatures;
         this.featureLists = [this.font.gsubFeatures].concat([this.font.gposFeatures]).flatMap(e=>e);
+        this.currentState = {};
         this.settings = {
             // textKinds,
             featureLists : this.featureLists,
             toolBoxes : ['Typeface', 'Basic Controls', 'Variable Settings','Opentype Features',  'Colors'],
             toolBoxCheckers : [true, true, this.variationAxes[0], this.featureLists[0],  true],
             basicControls : {
-                "Size": {min: 10, max:300, default:100, step:1, css: "fontSize", unit:"px"}, 
-                "Line height": {min: 0, max:2, default:1.2, step:0.01, css: "lineHeight"}, 
-                "Letter spacing": {min: -1, max:1, default:0, step:0.01, css: "letterSpacing", unit:"rem"}
+                "Size": {min: 10, max:300, default:100, step:1, prop: "fontSize", unit:"px"}, 
+                "Line height": {min: 0, max:2, default:1.2, step:0.01, prop: "lineHeight"}, 
+                "Letter spacing": {min: -1, max:1, default:0, step:0.01, prop: "letterSpacing", unit:"rem"}
             },
             capTags: ["smcp", "c2sc", "pcap", "c2pc"],
             figureTags: ["pnum", "tnum", "lnum", "onum"],
@@ -497,13 +592,23 @@ class Settings{
                 label: "name",
                 image: "image",
             },
-            colorCss: {
-                "Typeface":{"css": "color", "defaultValue":"#000000"},
-                "Background": {"css": "backgroundColor", "defaultValue":"#FFFFFF"}},
+            colorData: {
+                "Typeface":{prop: "color", defaultValue:"000000"},
+                "Background": {prop: "backgroundColor", defaultValue:"FFFFFF"}},
             allPlaying: false,
             easing: '',
-            currentInstance : {},
-            // updateInstane : ()
+            updateInstance(){
+                console.log(_this.currentState.instance)
+                const coordinates = _this.currentState.instance.coordinates;
+
+                for (const [axis, value] of Object.entries(coordinates)){
+                    const inputs = _this.parent.querySelectorAll(`.${axis}input`)
+                    for (const input of inputs){
+                        input.value = value;
+                    }
+                    updateVariationCSS(axis, value)
+                }
+            }
         }
     }
 

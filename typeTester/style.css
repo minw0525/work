@@ -21,7 +21,7 @@
     --shade-6: #33f;
     --shade-7: #11f;
     --border-2px: 2px;
-    --border-1-5px: 1.5px;
+    --border-1px: 1px;
     --btn-size: 22px;
 }
 *{
@@ -125,7 +125,7 @@ control-bar::after{
 tool-box{
     display: flex;
     flex-direction: column;
-    border:var(--border-1-5px) solid var(--color-bl);
+    border:var(--border-2px) solid var(--color-bl);
     border-radius : 5px;
     padding: 7px 10px;
     gap:5px;
@@ -145,10 +145,10 @@ toolbox-header select{
     background-position-x: 100%;
     background-repeat: no-repeat;
     width: 100%;
-    border: var(--border-1-5px) solid var(--color-bl);
+    border: var(--border-2px) solid var(--color-bl);
     border-radius: 3px;
     color: var(--color-bl);
-    height: 1.5rem;
+    height: var(--h1-size);
     font-size: var(--h3-size);
     margin-bottom: 5px;
     padding-left: 5px;
@@ -177,6 +177,45 @@ toolbox-header select:disabled{
     padding-left: 5px;
     vertical-align: top;
 }
+.rangeContent {
+    align-items: center;
+    gap: 5px;
+}
+button{
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    color:var(--color-bl);
+    background-color: var(--color-wt);
+    cursor:pointer;
+}
+button:hover{
+    color: var(--shade-3);
+}
+.rangeContent button{
+    padding: 3px;
+    flex: 0 0 var(--btn-size);
+    min-width: var(--btn-size);
+    max-width: var(--btn-size);
+    height: var(--btn-size);
+    border: none;
+    background-origin: border-box;
+    display: flex;
+    align-items: center;
+    font-size: var(--small-size);
+}
+.rangeContent button.playing{
+    padding: 1px;
+}
+.rangeContent button.paused::before{
+    content:"▶️";
+}
+.rangeContent button.playing::before{
+    content:"■";
+    font-size: larger;
+}
+
 .sliderRange{
     width:98%;
 }
@@ -186,6 +225,27 @@ toolbox-header select:disabled{
     width: 3rem;
     height: 1.4rem;
     text-align:right;
+}
+.animationPlayer{
+    gap: 10px;
+    align-items: center;
+}
+.animationPlayer button{
+    flex: 1 1 50%;
+    height: var(--h1-size);
+    border-radius: 3px;
+    border: var(--border-2px) solid var(--color-bl);
+    display: flex;
+    gap:5px;
+    align-items: center;
+    justify-content: center;
+}
+.animationPlayer button.paused:first-child::before{
+    content:"▶️ ";
+    font-size:smaller;
+}
+.animationPlayer button.playing:first-child::before{
+    content:"■ ";
 }
 feature-block, color-block{
     height: 1.2rem;
@@ -210,7 +270,7 @@ feature-block *:nth-child(3){
     flex: 1 0 10%;
 }
 feature-block input[type=checkbox]{
-    border : 1px solid var(--color-bl);
+    border : var(--border-2px) solid var(--color-bl);
 }
 color-block{
     align-items: center;
@@ -283,14 +343,14 @@ input[type=range] {
   }
   input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
-    height: var(--border-1-5px);
+    height: var(--border-2px);
     cursor: pointer;
     animate: 0.2s;
     background: var(--color-bl);
     border: 0px solid var(--color-bl);
   }
   input[type=range]::-webkit-slider-thumb {
-    border: var(--border-1-5px) solid var(--color-bl);
+    border: var(--border-2px) solid var(--color-bl);
     height: var(--btn-size);
     width: var(--btn-size);
     border-radius: 35px;
@@ -304,7 +364,7 @@ input[type=range] {
   }
   input[type=range]::-moz-range-track {
     width: 100%;
-    height: var(--border-1-5px);
+    height: var(--border-2px);
     cursor: pointer;
     animate: 0.2s;
     background: var(--color-bl);
@@ -312,7 +372,7 @@ input[type=range] {
     border: 0px solid var(--color-bl);
   }
   input[type=range]::-moz-range-thumb {
-    border: var(--border-1-5px) solid var(--color-bl);
+    border: var(--border-2px) solid var(--color-bl);
     height: var(--btn-size);
     width: var(--btn-size);
     border-radius: 35px;
@@ -321,7 +381,7 @@ input[type=range] {
   }
   input[type=range]::-ms-track {
     width: 100%;
-    height: var(--border-1-5px);
+    height: var(--border-2px);
     cursor: pointer;
     animate: 0.2s;
     background: transparent;
@@ -340,7 +400,7 @@ input[type=range] {
   }
   input[type=range]::-ms-thumb {
     margin-top: var(--border-2px);
-    border: var(--border-1-5px) solid var(--color-bl);
+    border: var(--border-2px) solid var(--color-bl);
     height: var(--btn-size);
     width: var(--btn-size);
     border-radius: 35px;
@@ -383,13 +443,13 @@ input[type="color"] {
   }
   
   ::-webkit-color-swatch{
-    border: var(--border-1-5px) solid var(--color-bl);
+    border: var(--border-2px) solid var(--color-bl);
     border-radius: calc(var(--btn-size)/2);
   }
   
   ::-moz-color-swatch,
   ::-moz-focus-inner{
-    border: var(--border-1-5px) solid var(--color-bl);
+    border: var(--border-2px) solid var(--color-bl);
   }
   
   ::-moz-focus-inner{

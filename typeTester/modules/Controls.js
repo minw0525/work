@@ -2,7 +2,16 @@ import featureDefaults from "./opentypeFeatureDefaults.js";
 
 const sandbox = document.getElementById('sandbox')
 const mainEl = document.getElementById('content')
-const dropzone = document.getElementById('dropzone')
+
+const requestAnimationFrame =
+  window.requestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.webkitRequestAnimationFrame ||
+  window.msRequestAnimationFrame;
+
+const cancelAnimationFrame =
+  window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
 
 const cssSettings = new Proxy({}, {
     set(target, prop, val){
@@ -208,18 +217,26 @@ class VariableInputRange extends HTMLElement{
         this.labelName = document.createElement('label')
         this.labelTag = document.createElement('span')
         this.inputText = document.createElement('input')
+        this.header.appendChildren(this.labelName, this.inputText)
+        this.header.classList.add("rangeHeader", "flex")
+
+        this.content = document.createElement('div')
+        this.playButton = document.createElement('button')
         this.inputRange = document.createElement('input')
+        
+        this.content.appendChildren(this.playButton, this.inputRange)
+        this.content.classList.add("rangeContent", "flex")
+        this.playButton.classList.add("paused")
+
         this.datalist = document.createElement('datalist')
 
         this.inputs = [this.inputRange, this.inputText]
 
-        this.header.classList.add("rangeHeader", "flex")
         this.inputRange.classList.add("sliderRange")
         this.inputText.classList.add("sliderLabel")
         this.inputRange.setAttributes({'type':'range', 'list':'inputSnaps'})
         this.inputText.setAttributes({"type": "text", "inputmode":"decimal", "number":"true", "autocomplete":"off"})
         
-        this.header.appendChildren(this.labelName, this.inputText)
         this.labelName.appendChild(this.labelTag)
 
         this.currentState = {}
@@ -233,10 +250,15 @@ class VariableInputRange extends HTMLElement{
         this.min = this.axis.minValue;
         this.max = this.axis.maxValue;
         this.default = Math.round(this.axis.defaultValue * 100) / 100;
+        this.valueStep = this.max - this.min > 10 ? 1 : this.max - this.min > 1 ?  0.1 : 0.01
         this.prop = this.axis.tag;
+        this.playSpeed = this.controls.currentState.playSpeed;
+        this.playStep = (this.max - this.min) / 100
+        this.playing = false;
+        this.playingDirection = 1;
     }
     initializeUI(){
-        this.appendChildren(this.header, this.inputRange, this.datalist)
+        this.appendChildren(this.header, this.content, this.datalist)
         this.labelName.textContent = this.name;
         this.labelTag.textContent = this.tag;
 
@@ -245,7 +267,7 @@ class VariableInputRange extends HTMLElement{
         for (const input of this.inputs){
             input.min = this.min;
             input.max = this.max;
-            input.step = this.max > 10 ? 1 : this.max > 1 ? 0.1 : 0.01;
+            input.step = this.valueStep
             input.value = this.default;
 
             input.addEventListener('input', this.inputHandler.bind(this))
@@ -261,6 +283,9 @@ class VariableInputRange extends HTMLElement{
             option.textContent = snap
             this.datalist.appendChild(option)
         }
+
+        this.playButton.addEventListener('click', this.btnEventHandler.bind(this))
+
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
@@ -277,15 +302,66 @@ class VariableInputRange extends HTMLElement{
         }else if (ev.target.value > this.max){
             this.currentState[this.prop] = this.max
         }else{
-            this.currentState[this.prop] = ev.target.value
+            this.currentState[this.prop] = parseFloat(ev.target.value)
         }
+        // console.log(1, this.currentState[this.prop], 2, this.controls.currentState[this.prop])
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
+    }
+    btnEventHandler(){
+        if (this.playing){
+            this.stopAnimation()
+            return
+        }
+        this.playAnimation() 
     }
     updateState(prop, value){
         this.controls.currentState[prop] = value;
     }
+    animate(){
+        let next = this.currentState[this.prop] + (this.playingDirection * this.playStep * this.playSpeed)
+        if (next >= this.max){
+            next = this.max
+            this.playingDirection = -1
+        }
+        if (next <= this.min){
+            next = this.min
+            this.playingDirection = 1
+        }
+        console.log(next)
+        // console.log(1, next, 2, this.currentState[this.prop], 3, this.controls.currentState[this.prop])
+        this.currentState[this.prop] = Math.round(next / this.valueStep) / ( 1/ this.valueStep)
+        this.updateState(this.prop, this.currentState[this.prop])
+        this.updateUI()
 
+        this.animation = requestAnimationFrame(()=>{
+            this.animate()
+        })
+    }
+    playAnimation(){
+        if(this.playing){return}
+        this.playButton.classList.replace("paused", "playing")
+        this.playing = true
+        this.controls.currentState.globalPlaying++;
+        this.animate()
+        if(this.controls.currentState.globalPlaying === this.controls.font.variationAxes.length){
+            this.globalPlayBtn.textContent = 'Stop All'    
+            this.globalPlayBtn.classList.replace("paused", "playing")
+        }
+
+    }
+    stopAnimation(){
+        if(!this.playing){return}
+        if(this.controls.currentState.globalPlaying === this.controls.font.variationAxes.length){
+            this.globalPlayBtn.textContent = 'Play All'    
+            this.globalPlayBtn.classList.replace("playing", "paused")
+        }
+        this.playButton.classList.replace("playing", "paused")
+        this.playing = false
+        this.controls.currentState.globalPlaying--;
+        cancelAnimationFrame(this.animation)
+        
+    }
 }
 
 class FeatureBlock extends HTMLElement{
@@ -477,12 +553,63 @@ class ToolBox extends HTMLElement{
     }
     
     buildVariableControls(){
+        
+        let currentSpeedIdx = 1
+        this.controls.currentState.playSpeed = this.settings.playSpeeds[currentSpeedIdx];
+        this.controls.currentState.globalPlaying = 0;
+        
+        const animationPlayer = document.createElement('div')
+        const playAllBtn = document.createElement('button')
+        const setSpeedBtn = document.createElement('button')
+
         for(const axis of Object.values(this.font.variationAxes)){
             const variableInputRange = document.createElement('variableinput-range')
             variableInputRange.axis = axis
-            variableInputRange.controls = this.controls
-            this.appendChild(variableInputRange)
+            variableInputRange.controls = this.controls;
+            variableInputRange.globalPlayBtn = playAllBtn;
+            this.appendChildren(variableInputRange)
         }
+
+        playAllBtn.textContent = 'Play All'
+        setSpeedBtn.textContent = `×${this.controls.currentState.playSpeed}`
+        playAllBtn.classList.add("paused")
+
+        playAllBtn.addEventListener('click', (ev)=>{
+            if(this.controls.currentState.globalPlaying === this.font.variationAxes.length){
+                ev.target.textContent = 'Play All'
+                ev.target.classList.replace("paused", "playing")
+                this.querySelectorAll('variableinput-range').forEach(el=>{
+                    el.stopAnimation()
+                })
+            }else if(this.controls.currentState.globalPlaying){
+                ev.target.textContent = 'Play All'    
+                ev.target.classList.replace("playing", "paused")
+                this.querySelectorAll('variableinput-range').forEach(el=>{
+                    el.playAnimation();
+                })
+            }else{
+                ev.target.textContent = 'Play All'
+                ev.target.classList.replace("paused", "playing")
+                this.querySelectorAll('variableinput-range').forEach(el=>{
+                    el.playAnimation();
+                })
+            }
+        })
+        
+
+        setSpeedBtn.addEventListener('click', (ev)=>{
+            currentSpeedIdx = ++currentSpeedIdx%4
+            this.controls.currentState.playSpeed = this.settings.playSpeeds[currentSpeedIdx]
+            this.querySelectorAll('variableinput-range').forEach(el=>{
+                el.playSpeed = this.controls.currentState.playSpeed
+                ev.target.textContent = `×${this.controls.currentState.playSpeed}`
+            })
+        })
+
+        animationPlayer.appendChildren(playAllBtn, setSpeedBtn)
+        animationPlayer.classList.add("animationPlayer", "rangeHeader", "flex")
+
+        this.appendChild(animationPlayer)
     }
 
     buildFeatureControls(){
@@ -558,6 +685,7 @@ class Controls{
         this.featureLists = [this.font.gsubFeatures].concat([this.font.gposFeatures]).flatMap(e=>e);
         this.settings = {
             // textKinds,
+            playSpeeds : [0.5, 1, 1.5, 2],
             featureLists : this.featureLists,
             toolBoxes : ['Typeface', 'Basic Controls', 'Variable Settings','Opentype Features',  'Colors'],
             toolBoxCheckers : [true, true, this.variationAxes[0], this.featureLists[0],  true],

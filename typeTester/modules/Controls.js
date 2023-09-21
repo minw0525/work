@@ -2,6 +2,7 @@ import featureDefaults from "./opentypeFeatureDefaults.js";
 
 const sandbox = document.getElementById('sandbox')
 const mainEl = document.getElementById('content')
+const dropzone = document.getElementById('dropzone')
 
 const cssSettings = new Proxy({}, {
     set(target, prop, val){
@@ -510,6 +511,7 @@ export default class ControlBar extends HTMLElement{
         this.font = currentFont
         this.controls = new Controls(this.font);
         this.controls.parent = this;
+        this.id = 'control-bar'
     }
     connectedCallback(){
         this.updateFont()
@@ -520,6 +522,7 @@ export default class ControlBar extends HTMLElement{
     }
     setData(){
         this.font = currentFont
+        console.log(this.font)
         this.controls.updateData(currentFont)
     }
     initializeUI(){
@@ -546,7 +549,6 @@ class Controls{
         this.currentState = {};
     }
     updateData(opentypeFont){
-        console.trace(opentypeFont)
         const _this = this;
         this.font = opentypeFont;
         this.fileName = opentypeFont.fileName;

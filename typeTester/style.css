@@ -92,6 +92,7 @@ main{
 }
 control-bar{
     display: flex;
+    position: relative;
     box-sizing: content-box;
     flex: 1 1 calc(10vw + 200px );
     flex-direction: column;
@@ -105,6 +106,21 @@ control-bar{
     gap:8px;
     overflow: auto;
     background: var(--color-wt);
+    min-width: 300px;
+    max-width: 50vw;
+    user-select: none;
+}
+control-bar::before{
+    content: '';
+    display: flex;
+    width: 8px;
+    height: calc(100% - 40px);
+    position: absolute;
+    left: -3px;
+    cursor: col-resize;
+}
+control-bar::after{
+    all: unset;
 }
 tool-box{
     display: flex;
@@ -230,12 +246,29 @@ color-block *:nth-child(3){
         flex: 60vh;
     }
     control-bar{
+        min-width : unset;
+        max-width : unset;
         flex: 40vh;
         border-top: none;
         border-top-left-radius:0;
         margin: 0 10px;
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 15px;
+        min-height: 400px;
+        max-height: 60vh;
+    }
+    control-bar::before{
+        all : unset;
+    }
+    control-bar::after{
+        content: '';
+        display: flex;
+        width: calc(100% - 40px);
+        height : 8px;
+        left:0;
+        bottom: -3px;
+        position: absolute;
+        cursor: row-resize;
     }
     
 }

@@ -77,12 +77,10 @@ const parseFont = async (fontFile)=>{
 }
 
 const onFontUploaded = async (fontFile)=>{
-    console.log(fontFile)
     const fileName = fontFile.name;
     const opentypeFont = await parseFont(fontFile)
     const url = await getFileURL(fontFile);
     window.currentFont = new Font(opentypeFont, url, fileName)
-    console.log(opentypeFont)
     displayFontData(currentFont)
     setFontFace(currentFont.fontFace)
 }
@@ -116,5 +114,63 @@ const dragOverHandler = (ev)=>{
     ev.preventDefault();
 }
 
+const addDragHandler = ()=>{
+    let isNarrow = document.body.offsetWidth < 768 ? true : false;
+    let initialCoord;
+    let movement = 0
+    let target = 0
+    let flexBasisPx = isNarrow ? 0 : 200;
+    let flexBasisVp = isNarrow ? 0.4 : 0.1; 
+    let controlsMinSize = isNarrow ? 400 : 300;
+    let controlsMaxVp = isNarrow ? 0.6 : 0.5;
+    let viwePort = isNarrow ? document.body.clientHeight : document.body.clientWidth
+    let mouseDowned = false
+    let controlsClicked = false
+
+    addEventListener('mousedown', (ev)=>{
+        isNarrow = document.body.offsetWidth < 768 ? true : false;
+        
+        initialCoord = isNarrow ? ev.clientY : ev.clientX
+
+        mouseDowned = true;
+
+        if (isNarrow){
+            target = document.elementsFromPoint(ev.clientX, ev.clientY).find(e=>e.id==='control-bar') ? document.elementsFromPoint(ev.clientX, ev.clientY).find(e=>e.id==='control-bar') : false;
+            controlsClicked = target && target.offsetHeight - initialCoord < 7 ? true : false;
+        }else{
+            target = ev.target.id === 'control-bar' ? ev.target : false;
+            controlsClicked = target && initialCoord - target.offsetLeft < 7 ? true : false;
+        }
+    })
+    addEventListener('mousemove', (ev)=>{
+        if (mouseDowned && controlsClicked){
+            movement = isNarrow ? ev.clientY - initialCoord  : initialCoord - ev.clientX
+            
+            if (isNarrow) {                
+                target.style.flexBasis = `calc(${flexBasisPx + movement}px + 40vh)`
+                dropzone.style.flexBasis = `calc(${- flexBasisPx - movement}px + 60vh)`
+            }else{                
+                target.style.flexBasis = `calc(${flexBasisPx + movement}px + 10vw)`
+                dropzone.style.flexBasis = `calc(${-flexBasisPx - movement}px + 90vw)`
+            }
+        }  
+    })
+    // this.addEventListener('mouseout', (ev)=>{
+    //     if (mouseDowned) {mouseDowned = !mouseDowned};
+    //     initialX = 0;
+    //     console.log('mouseout')
+    // })
+    addEventListener('mouseup', (ev)=>{
+        mouseDowned = false
+        if (flexBasisPx + movement + (viwePort * flexBasisVp ) < controlsMinSize){
+            flexBasisPx = controlsMinSize - (viwePort * flexBasisVp) 
+        }else if(flexBasisPx + movement + (viwePort * flexBasisVp ) > (controlsMaxVp * viwePort)){
+            flexBasisPx = controlsMaxVp * viwePort - (viwePort * flexBasisVp) 
+        }else{flexBasisPx = flexBasisPx + movement  }
+        movement = 0;
+    })
+}
+
 dropzone.addEventListener('drop', dropHandler)
 dropzone.addEventListener('dragover', dragOverHandler)
+addDragHandler()

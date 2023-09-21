@@ -75,34 +75,36 @@ class ToolboxHeader extends HTMLElement{
         this.appendChildren(this.familyEl, this.instancesSelect)
         this.instancesSelect.addEventListener('change', this.changeHandler.bind(this))
 
-        this.currentState[this.prop] = (()=>{
-            for(const idx in this.presets){
-                if (this.presets[idx].name.en === this.styleName) {
-                    this.optIdx = idx
-                    return this.presets[idx]
-                };
-            }
-        })()
+        console.log(this.controls.font.presets)
 
         this.instancesSelect.innerHTML = ''
+
+        if(!this.presets.length){
+            this.instancesSelect.disabled = true;
+            this.presets.unshift({"name":{"en": this.styleName}})
+        }
+
         for(const idx in this.presets){
             const option = document.createElement('option');
             option.textContent = this.presets[idx].name.en;
             option.value = idx;
             this.instancesSelect.appendChild(option)
+
+            if (this.presets[idx].name.en === this.styleName) {
+                this.currentState[this.prop] = this.presets[idx]
+            };
         }
-        if(!this.presets.length){
-            this.instancesSelect.disabled = true;
-            this.presets.unshift({"name":{"en": this.styleName}})
-        }
-        
+
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
 
     updateUI(){
-        this.familyEl.textContent = this.controls.currentState[this.prop].name.en;
-        this.controls.settings.updateInstance()
+        console.log(this.currentState[this.prop])
+        this.familyEl.textContent = this.family;
+        if(this.controls.currentState[this.prop].coordinates){
+            this.controls.settings.updateInstance()
+        }
     }
     changeHandler(ev){
         this.currentState[this.prop] = this.presets[ev.target.value]
@@ -598,7 +600,7 @@ class Controls{
                 for (const [axis, value] of Object.entries(coordinates)){
                     const inputs = _this.parent.querySelectorAll(`.${axis}input`)
                     for (const input of inputs){
-                        input.value = value;
+                        input.value =  Math.round(value * 100) / 100;
                     }
                     updateVariationCSS(axis, value)
                 }

@@ -250,7 +250,7 @@ class VariableInputRange extends HTMLElement{
         this.min = this.axis.minValue;
         this.max = this.axis.maxValue;
         this.default = Math.round(this.axis.defaultValue * 100) / 100;
-        this.valueStep = this.max - this.min > 10 ? 1 : this.max - this.min > 1 ?  0.1 : 0.01
+        this.valueStep = this.max - this.min > 50 ? 1 : this.max - this.min > 1 ?  0.1 : 0.01
         this.prop = this.axis.tag;
         this.playSpeed = this.controls.currentState.playSpeed;
         this.playStep = (this.max - this.min) / 100
@@ -724,7 +724,6 @@ class Controls{
             colorData: {
                 "Typeface":{prop: "color", defaultValue:"000000"},
                 "Background": {prop: "backgroundColor", defaultValue:"FFFFFF"}},
-            allPlaying: false,
             easing: '',
             updateInstance(){
                 const coordinates = _this.currentState.instance.coordinates;

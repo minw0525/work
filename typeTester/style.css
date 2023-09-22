@@ -2,6 +2,7 @@
 
 :root{
     --font-family: "covik-sans", "Pretendard", "Apple SD Gothic" ,"Arial", sans-serif;
+    --btn-font: "covik-sans","Segoe UI Symbol", monospace;
     --font-size: calc(1vh + 7px);
     --color: black;
     --bgColor: White;
@@ -189,6 +190,7 @@ button{
     color:var(--color-bl);
     background-color: var(--color-wt);
     cursor:pointer;
+    font-family : var(--btn-font);
 }
 button:hover{
     color: var(--shade-3);
@@ -213,7 +215,6 @@ button:hover{
 }
 .rangeContent button.playing::before{
     content:"■";
-    font-size: larger;
 }
 
 .sliderRange{
@@ -236,16 +237,24 @@ button:hover{
     border-radius: 3px;
     border: var(--border-2px) solid var(--color-bl);
     display: flex;
-    gap:5px;
+    gap:7px;
     align-items: center;
     justify-content: center;
 }
 .animationPlayer button.paused:first-child::before{
     content:"▶️ ";
-    font-size:smaller;
+    font-size: var(--small-size);
 }
 .animationPlayer button.playing:first-child::before{
     content:"■ ";
+    font-size: var(--small-size);
+}
+.animationPlayer button:last-child::before{
+    content: "↻";
+    font-size: larger;
+    font-weight: bold;
+    position: relative;
+    bottom: 0.07rem;
 }
 feature-block, color-block{
     height: 1.2rem;

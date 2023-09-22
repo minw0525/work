@@ -328,7 +328,6 @@ class VariableInputRange extends HTMLElement{
             next = this.min
             this.playingDirection = 1
         }
-        console.log(next)
         // console.log(1, next, 2, this.currentState[this.prop], 3, this.controls.currentState[this.prop])
         this.currentState[this.prop] = Math.round(next / this.valueStep) / ( 1/ this.valueStep)
         this.updateState(this.prop, this.currentState[this.prop])
@@ -581,15 +580,7 @@ class ToolBox extends HTMLElement{
                 this.querySelectorAll('variableinput-range').forEach(el=>{
                     el.stopAnimation()
                 })
-            }else if(this.controls.currentState.globalPlaying){
-                ev.target.textContent = 'Play All'    
-                ev.target.classList.replace("playing", "paused")
-                this.querySelectorAll('variableinput-range').forEach(el=>{
-                    el.playAnimation();
-                })
             }else{
-                ev.target.textContent = 'Play All'
-                ev.target.classList.replace("paused", "playing")
                 this.querySelectorAll('variableinput-range').forEach(el=>{
                     el.playAnimation();
                 })

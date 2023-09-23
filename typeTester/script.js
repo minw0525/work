@@ -1,12 +1,16 @@
 import * as opentype from "./modules/opentype.module.js";
 import Font  from "./modules/Font.js";
 import ControlBar  from "./modules/Controls.js";
+import textDefaults from "./modules/textDefaults.js";
+
 
 
 const mainEl = document.getElementById('content')
-const dropzone = document.getElementById('dropzone')
-const sandbox = document.getElementById('sandbox')
-const preview = document.getElementById('previewFont')
+const landing = document.getElementById('landing')
+const previewZone = document.getElementById('font-preview')
+const userText = document.getElementById('userText')
+const fontfaceContainer = document.getElementById('previewFont')
+const fileOpener = document.getElementById('uploadfont')
 
 HTMLElement.prototype.setAttributes = function(attrs){
     for(var key in attrs) {
@@ -17,10 +21,6 @@ HTMLElement.prototype.appendChildren = function(...nodes){
     for(const node of nodes){
         this.appendChild(node)
     }
-}
-
-function print(str){
-    console.trace(str)
 }
 
 const showErrorMessage = (err)=>{
@@ -38,33 +38,41 @@ const getFileURL = (fontFile)=>{
     })
 }
 
+const setPreviewText = (str, state)=>{
+    userText.textContent = str;
+    state.currentText = str;
+}
 
-const displayFontData = (font)=>{
-
+const displayFontData = ()=>{
+    const textIdx = Math.floor(Math.random() * textDefaults.length)
     if(!mainEl.querySelector('control-bar')){
         const controlBar = new ControlBar()
         mainEl.appendChild(controlBar)
 
-        sandbox.style.fontFamily = "preview, sans-serif";
-        sandbox.style.fontWeight = "unset";
+        userText.style.fontFamily = "preview, sans-serif";
+        userText.style.fontWeight = "unset";
+
+        landing.style.visibility = "hidden";
+        setPreviewText(textDefaults[textIdx], controlBar.controls.currentState)
 
         return
     }
+    
     const controlBar = mainEl.querySelector('control-bar');
     controlBar.updateFont()
-    // controlEl.updateData()
-
+    
+    setPreviewText(textDefaults[textIdx], controlBar.controls.currentState)
 }
 
 const setFontFace = (fontFace)=>{
     const newStyle = document.createElement("style");
     newStyle.appendChild(document.createTextNode(fontFace));
 
-    if(preview.children.length > 0){
-        preview.replaceChildren(newStyle)
+    if(fontfaceContainer.children.length > 0){
+        fontfaceContainer.replaceChildren(newStyle)
         return
     }
-    preview.appendChild(newStyle);
+    fontfaceContainer.appendChild(newStyle);
 }
 
 const parseFont = async (fontFile)=>{
@@ -81,8 +89,14 @@ const onFontUploaded = async (fontFile)=>{
     const opentypeFont = await parseFont(fontFile)
     const url = await getFileURL(fontFile);
     window.currentFont = new Font(opentypeFont, url, fileName)
-    displayFontData(currentFont)
     setFontFace(currentFont.fontFace)
+    displayFontData(currentFont)
+}
+
+const fileOpenHandler = (ev)=>{
+    const file = ev.target.files[0];
+    window.currentFontFile = file;
+    onFontUploaded(currentFontFile)
 }
 
 const dropHandler = (ev)=>{
@@ -110,24 +124,25 @@ const dropHandler = (ev)=>{
         });
     }
 }
+
 const dragOverHandler = (ev)=>{
     ev.preventDefault();
 }
 
-const addDragHandler = ()=>{
+const controlsDragHandler = ()=>{
     let isNarrow = document.body.offsetWidth < 768 ? true : false;
     let initialCoord;
     let movement = 0
     let target = 0
     let flexBasisPx = isNarrow ? 0 : 200;
     let flexBasisVp = isNarrow ? 0.4 : 0.1; 
+    let viewPort = isNarrow ? document.body.clientHeight : document.body.clientWidth
     let controlsMinSize = isNarrow ? 400 : 300;
-    let controlsMaxVp = isNarrow ? 0.6 : 0.5;
-    let viwePort = isNarrow ? document.body.clientHeight : document.body.clientWidth
+    let controlsMaxSize = isNarrow ? 0.6 * viewPort : 0.5 * viewPort;
     let mouseDowned = false
     let controlsClicked = false
 
-    addEventListener('mousedown', (ev)=>{
+    mainEl.addEventListener('mousedown', (ev)=>{
         isNarrow = document.body.offsetWidth < 768 ? true : false;
         
         initialCoord = isNarrow ? ev.clientY : ev.clientX
@@ -142,35 +157,44 @@ const addDragHandler = ()=>{
             controlsClicked = target && initialCoord - target.offsetLeft < 7 ? true : false;
         }
     })
-    addEventListener('mousemove', (ev)=>{
+    mainEl.addEventListener('mousemove', (ev)=>{
         if (mouseDowned && controlsClicked){
             movement = isNarrow ? ev.clientY - initialCoord  : initialCoord - ev.clientX
+
+            const [t, p] = isNarrow ? ['40vh', '60vh'] : ['10vw', '90vw']
             
-            if (isNarrow) {                
-                target.style.flexBasis = `calc(${flexBasisPx + movement}px + 40vh)`
-                dropzone.style.flexBasis = `calc(${- flexBasisPx - movement}px + 60vh)`
-            }else{                
-                target.style.flexBasis = `calc(${flexBasisPx + movement}px + 10vw)`
-                dropzone.style.flexBasis = `calc(${-flexBasisPx - movement}px + 90vw)`
-            }
+            target.style.flexBasis = `calc(${flexBasisPx + movement}px + ${t})`
+            previewZone.style.flexBasis = `calc(${- flexBasisPx - movement}px + ${p})`
         }  
     })
-    // this.addEventListener('mouseout', (ev)=>{
-    //     if (mouseDowned) {mouseDowned = !mouseDowned};
-    //     initialX = 0;
-    //     console.log('mouseout')
-    // })
-    addEventListener('mouseup', (ev)=>{
-        mouseDowned = false
-        if (flexBasisPx + movement + (viwePort * flexBasisVp ) < controlsMinSize){
-            flexBasisPx = controlsMinSize - (viwePort * flexBasisVp) 
-        }else if(flexBasisPx + movement + (viwePort * flexBasisVp ) > (controlsMaxVp * viwePort)){
-            flexBasisPx = controlsMaxVp * viwePort - (viwePort * flexBasisVp) 
-        }else{flexBasisPx = flexBasisPx + movement  }
-        movement = 0;
+    mainEl.addEventListener('mouseup', (ev)=>{
+        if (mouseDowned && controlsClicked){
+
+            mouseDowned = false
+            if (flexBasisPx + movement + (viewPort * flexBasisVp ) < controlsMinSize){
+
+                flexBasisPx = controlsMinSize - (viewPort * flexBasisVp) 
+
+            }else if(flexBasisPx + movement + (viewPort * flexBasisVp ) > (controlsMaxSize)){
+
+                flexBasisPx = controlsMaxSize - (viewPort * flexBasisVp) 
+
+            }else{
+                flexBasisPx = flexBasisPx + movement 
+            }
+            movement = 0;
+
+            const [t, p] = isNarrow ? ['40vh', '60vh'] : ['10vw', '90vw']
+
+            target.style.flexBasis = `calc(${flexBasisPx + movement}px + ${t})`
+            previewZone.style.flexBasis = `calc(${- flexBasisPx - movement}px + ${p})`
+        }
     })
 }
 
-dropzone.addEventListener('drop', dropHandler)
-dropzone.addEventListener('dragover', dragOverHandler)
-addDragHandler()
+
+
+mainEl.addEventListener('drop', dropHandler)
+mainEl.addEventListener('dragover', dragOverHandler)
+fileOpener.addEventListener("change", fileOpenHandler);
+controlsDragHandler()

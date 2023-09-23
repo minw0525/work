@@ -1,6 +1,6 @@
 import featureDefaults from "./opentypeFeatureDefaults.js";
 
-const sandbox = document.getElementById('sandbox')
+const userText = document.getElementById('userText')
 const mainEl = document.getElementById('content')
 
 const requestAnimationFrame =
@@ -26,11 +26,11 @@ const cssSettings = new Proxy({}, {
 
         if(cssSettings.font){
             for (const [key, value] of Object.entries(cssSettings.font)){
-                sandbox.style[key] = value
+                userText.style[key] = value
             }
         }
-        sandbox.style.fontVariationSettings = varCssString;
-        sandbox.style.fontFeatureSettings = feaCssString;
+        userText.style.fontVariationSettings = varCssString;
+        userText.style.fontFeatureSettings = feaCssString;
 
         return true;
     }
@@ -97,11 +97,11 @@ class ToolboxHeader extends HTMLElement{
             option.textContent = this.presets[idx].name.en;
             option.value = idx;
             this.instancesSelect.appendChild(option)
-
             if (this.presets[idx].name.en === this.styleName) {
-                this.currentState[this.prop] = this.presets[idx]
+                this.currentState[this.prop] = [this.presets[idx], idx]
             };
         }
+        this.currentState[this.prop] = [this.presets[0], 0]
 
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
@@ -109,12 +109,14 @@ class ToolboxHeader extends HTMLElement{
 
     updateUI(){
         this.familyEl.textContent = this.family;
-        if(this.controls.currentState[this.prop].coordinates){
+        this.instancesSelect.value = this.controls.currentState[this.prop][1];
+        if(this.controls.currentState[this.prop][0].coordinates){
             this.controls.settings.updateInstance()
         }
     }
     changeHandler(ev){
-        this.currentState[this.prop] = this.presets[ev.target.value]
+        console.log(ev.target.value)
+        this.currentState[this.prop] = [this.presets[ev.target.value], ev.target.value]
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
@@ -570,7 +572,7 @@ class ToolBox extends HTMLElement{
         }
 
         playAllBtn.textContent = 'Play All'
-        setSpeedBtn.textContent = `×${this.controls.currentState.playSpeed}`
+        setSpeedBtn.textContent = `Speed ×${this.controls.currentState.playSpeed}`
         playAllBtn.classList.add("paused")
 
         playAllBtn.addEventListener('click', (ev)=>{
@@ -593,7 +595,7 @@ class ToolBox extends HTMLElement{
             this.controls.currentState.playSpeed = this.settings.playSpeeds[currentSpeedIdx]
             this.querySelectorAll('variableinput-range').forEach(el=>{
                 el.playSpeed = this.controls.currentState.playSpeed
-                ev.target.textContent = `×${this.controls.currentState.playSpeed}`
+                ev.target.textContent = `Speed ×${this.controls.currentState.playSpeed}`
             })
         })
 
@@ -682,8 +684,8 @@ class Controls{
             toolBoxCheckers : [true, true, this.variationAxes[0], this.featureLists[0],  true],
             basicControls : {
                 "Size": {min: 10, max:300, default:100, step:1, prop: "fontSize", unit:"px"}, 
-                "Line height": {min: 0, max:2, default:1.2, step:0.01, prop: "lineHeight"}, 
-                "Letter spacing": {min: -1, max:1, default:0, step:0.01, prop: "letterSpacing", unit:"rem"}
+                "Line Height": {min: 0, max:2, default:1.2, step:0.01, prop: "lineHeight"}, 
+                "Letter Spacing": {min: -1, max:1, default:0, step:0.01, prop: "letterSpacing", unit:"rem"}
             },
             capTags: ["smcp", "c2sc", "pcap", "c2pc"],
             figureTags: ["pnum", "tnum", "lnum", "onum"],
@@ -717,8 +719,7 @@ class Controls{
                 "Background": {prop: "backgroundColor", defaultValue:"FFFFFF"}},
             easing: '',
             updateInstance(){
-                const coordinates = _this.currentState.instance.coordinates;
-
+                const coordinates = _this.currentState.instance[0].coordinates;
                 for (const [axis, value] of Object.entries(coordinates)){
                     const inputs = _this.parent.querySelectorAll(`.${axis}input`)
                     for (const input of inputs){

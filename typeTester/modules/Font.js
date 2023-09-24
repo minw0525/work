@@ -102,15 +102,21 @@ export default class Font {
             };
 
             if (f.tag == "locl") {
-            feature.languages = loclLanguages;
-            feature.selectedLanguage = loclLanguages[0];
+                feature.languages = loclLanguages;
+                const locale = navigator.languages
+                feature.selectedLanguage = loclLanguages.find((lang)=>{
+                    return locale.includes(lang.htmlTag)
+                })??loclLanguages[0];
+
+                this.selectedLanguage = feature.selectedLanguage;
+                // feature.selectedLanguage = loclLanguages[0];
             } else if (/ss\d\d/.test(f.tag)) {
-            const uiName =  f.feature.uiName;
-            feature.uiName = uiName && uiName['en'];
+                const uiName =  f.feature.uiName;
+                feature.uiName = uiName && uiName['en'];
             } else if (/cv\d\d/.test(f.tag)) {
-            const uiName =  f.feature.featUiLabelName;
-            feature.uiName = uiName && uiName['en'];
-            // console.log(feature.uiName)
+                const uiName =  f.feature.featUiLabelName;
+                feature.uiName = uiName && uiName['en'];
+                // console.log(feature.uiName)
             }
             this.gsubFeatures.push(feature);
         }
@@ -129,18 +135,30 @@ export default class Font {
         if (font && font.tables.fvar && font.tables.fvar.instances) {
           this.presets = font && font.tables.fvar && font.tables.fvar.instances;
         }
-    
-        if(!this.selectedPreset) this.selectedPreset = this.presets[0];
-    
-        var t = this;
-        this.presets.forEach(function(p){
-          if(Object.keys(p.name).length === 0){
-            p.name.en = 'Regular';
-          }
-          if(p.name.en == 'Regular'){
-            t.selectedPreset = p;
-          }
-        });
+
+        if(!this.presets.length){
+            this.presets.unshift({"name":{"en": this.style}})
+        }
+
+        this.presets.forEach((p, idx)=>{
+            if(Object.keys(p.name).length === 0){
+                p.name.en = 'Regular';
+            }
+            if(p.name.en === this.style){
+                this.selectedPreset = [p, idx]
+            }   
+        })
+        if(!this.selectedPreset) this.selectedPreset = [this.presets[0], 0];
+
+        // var t = this;
+        // this.presets.forEach(function(p){
+        //   if(Object.keys(p.name).length === 0){
+        //     p.name.en = 'Regular';
+        //   }
+        //   if(p.name.en == 'Regular'){
+        //     t.selectedPreset = p;
+        //   }
+        // });
     }
     generateFontFace(style, weight){
         this.fontFace = `

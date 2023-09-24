@@ -253,7 +253,7 @@ button:hover{
 .sliderLabel{
     font-size: var(--normal-size);
     font-family: "covik-sans-mono";
-    width: 3rem;
+    width: 4rem;
     height: 1.4rem;
     text-align:right;
 }

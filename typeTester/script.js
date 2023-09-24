@@ -1,7 +1,7 @@
 import * as opentype from "./modules/opentype.module.js";
 import Font  from "./modules/Font.js";
 import ControlBar  from "./modules/Controls.js";
-import textDefaults from "./modules/textDefaults.js";
+import pangrams from "./modules/pangrams.js";
 
 
 
@@ -44,7 +44,6 @@ const setPreviewText = (str, state)=>{
 }
 
 const displayFontData = ()=>{
-    const textIdx = Math.floor(Math.random() * textDefaults.length)
     if(!mainEl.querySelector('control-bar')){
         const controlBar = new ControlBar()
         mainEl.appendChild(controlBar)
@@ -53,7 +52,12 @@ const displayFontData = ()=>{
         userText.style.fontWeight = "unset";
 
         landing.style.visibility = "hidden";
-        setPreviewText(textDefaults[textIdx], controlBar.controls.currentState)
+
+        // const selectedfontLocale = currentFont.controls
+        const selectedLanguage = currentFont.selectedLanguage?.htmlTag || 'en';
+        const langTag = selectedLanguage in pangrams ? selectedLanguage : 'en'
+        const textIdx = Math.floor(Math.random() * pangrams[langTag].length)
+        setPreviewText(pangrams[langTag][textIdx], controlBar.controls.currentState)
 
         return
     }
@@ -61,7 +65,6 @@ const displayFontData = ()=>{
     const controlBar = mainEl.querySelector('control-bar');
     controlBar.updateFont()
     
-    setPreviewText(textDefaults[textIdx], controlBar.controls.currentState)
 }
 
 const setFontFace = (fontFace)=>{

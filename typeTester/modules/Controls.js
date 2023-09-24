@@ -1,7 +1,7 @@
 import featureDefaults from "./opentypeFeatureDefaults.js";
+import Settings from "./Settings.js";
 
 const userText = document.getElementById('userText')
-const mainEl = document.getElementById('content')
 
 const requestAnimationFrame =
   window.requestAnimationFrame ||
@@ -12,55 +12,6 @@ const requestAnimationFrame =
 const cancelAnimationFrame =
   window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
-
-const cssSettings = new Proxy({}, {
-    set(target, prop, val){
-        target[prop] = val;
-
-        const varCssStringRaw = JSON.stringify(cssSettings["font-variation-settings"])||''
-        const feaCssStringRaw = JSON.stringify(cssSettings["font-feature-settings"])||''
-
-        const varCssString = varCssStringRaw.replaceAll(':',' ').slice(1,-1)
-        const feaCssString = feaCssStringRaw.replaceAll('""','').replaceAll(':',' ').slice(1,-1)
-
-
-        if(cssSettings.font){
-            for (const [key, value] of Object.entries(cssSettings.font)){
-                userText.style[key] = value
-            }
-        }
-        userText.style.fontVariationSettings = varCssString;
-        userText.style.fontFeatureSettings = feaCssString;
-
-        return true;
-    }
-})
-
-function updateFontCSS(prop, val){
-    cssSettings["font"]??={}
-    let currentFontSettings = cssSettings["font"]||{}
-    currentFontSettings[prop]= val
-    const newFontSetting = JSON.parse(JSON.stringify(currentFontSettings))
-    cssSettings["font"] = newFontSetting
-
-}
-function updateVariationCSS(prop, val){
-    cssSettings["font-variation-settings"]??={}
-    let currentVarSettings = cssSettings["font-variation-settings"]||{}
-    currentVarSettings[prop]=parseFloat(val)
-    const newVarSetting = JSON.parse(JSON.stringify(currentVarSettings))
-    cssSettings["font-variation-settings"] = newVarSetting
-}
-function updateFeatureCSS(prop, val){
-    cssSettings["font-feature-settings"]??={}
-    let currentFeaSettings = cssSettings["font-feature-settings"]||{}
-    currentFeaSettings[prop]= val ? '' : 0
-    const newFeaSetting = JSON.parse(JSON.stringify(currentFeaSettings))
-    cssSettings["font-feature-settings"] = newFeaSetting
-}
-function updateColor(prop, val){
-    mainEl.style[prop] = val
-}
 
 class ToolboxHeader extends HTMLElement{
     constructor(){
@@ -86,10 +37,8 @@ class ToolboxHeader extends HTMLElement{
         this.instancesSelect.addEventListener('change', this.changeHandler.bind(this))
 
         this.instancesSelect.innerHTML = ''
-
-        if(!this.presets.length){
+        if(this.presets.length === 1){
             this.instancesSelect.disabled = true;
-            this.presets.unshift({"name":{"en": this.styleName}})
         }
 
         for(const idx in this.presets){
@@ -97,12 +46,9 @@ class ToolboxHeader extends HTMLElement{
             option.textContent = this.presets[idx].name.en;
             option.value = idx;
             this.instancesSelect.appendChild(option)
-            if (this.presets[idx].name.en === this.styleName) {
-                this.currentState[this.prop] = [this.presets[idx], idx]
-            };
         }
-        this.currentState[this.prop] = [this.presets[0], 0]
 
+        this.currentState[this.prop] = this.controls.font.selectedPreset, 
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
@@ -111,11 +57,10 @@ class ToolboxHeader extends HTMLElement{
         this.familyEl.textContent = this.family;
         this.instancesSelect.value = this.controls.currentState[this.prop][1];
         if(this.controls.currentState[this.prop][0].coordinates){
-            this.controls.settings.updateInstance()
+            this.controls.updateInstance()
         }
     }
     changeHandler(ev){
-        console.log(ev.target.value)
         this.currentState[this.prop] = [this.presets[ev.target.value], ev.target.value]
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
@@ -164,8 +109,7 @@ class InputRange extends HTMLElement{
     initializeUI(){
         this.appendChildren(this.header, this.inputRange, this.datalist)
         this.label.textContent = this.name;
-        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop][0] :this.default;
-
+        this.currentState[this.prop] = this.controls.currentState.basics[this.prop]? this.controls.currentState.basics[this.prop][0] :this.default;
         for (const input of this.inputs){
             input.min = this.min;
             input.max = this.max;
@@ -189,9 +133,9 @@ class InputRange extends HTMLElement{
     }
     updateUI(){
         for (const input of this.inputs){
-            input.value = this.controls.currentState[this.prop][0];
+            input.value = this.controls.currentState.basics[this.prop][0];
         }
-        updateFontCSS(this.prop,`${this.controls.currentState[this.prop][0]}${this.controls.currentState[this.prop][1]}`);
+        this.controls.updateFontCSS()//this.prop,`${this.controls.currentState.basics[this.prop][0]}${this.controls.currentState.basics[this.prop][1]}`);
     }
 
     inputHandler(ev){
@@ -207,7 +151,8 @@ class InputRange extends HTMLElement{
     }
 
     updateState(prop, value){
-        this.controls.currentState[prop] = value;
+        // this.controls.currentState[prop] = value;
+        this.controls.currentState.basics[prop] = value;
     }
     
 }
@@ -264,7 +209,7 @@ class VariableInputRange extends HTMLElement{
         this.labelName.textContent = this.name;
         this.labelTag.textContent = this.tag;
 
-        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop]:this.default;
+        this.currentState[this.prop] = this.controls.currentState.variations[this.prop]? this.controls.currentState.variations[this.prop]:this.default;
 
         for (const input of this.inputs){
             input.min = this.min;
@@ -293,10 +238,10 @@ class VariableInputRange extends HTMLElement{
     }
     updateUI(){
         for (const input of this.inputs){
-            input.value = this.controls.currentState[this.prop];
+            input.value = this.controls.currentState.variations[this.prop];
             // console.log(this.controls.currentState[this.prop]);
         }
-        updateVariationCSS(this.prop, this.controls.currentState[this.prop]);
+        this.controls.updateVariationCSS(this.prop, this.controls.currentState.variations[this.prop]);
     }
     inputHandler(ev){
         if (ev.target.value < this.min){
@@ -317,11 +262,10 @@ class VariableInputRange extends HTMLElement{
         }
         this.playAnimation() 
     }
-    updateState(prop, value){
-        this.controls.currentState[prop] = value;
-    }
     animate(){
-        let next = this.currentState[this.prop] + (this.playingDirection * this.playStep * this.playSpeed)
+        let increment = this.playStep * this.playSpeed;
+        increment = increment >= this.valueStep ? increment : this.valueStep
+        let next = this.currentState[this.prop] + (this.playingDirection * increment)
         if (next >= this.max){
             next = this.max
             this.playingDirection = -1
@@ -330,7 +274,7 @@ class VariableInputRange extends HTMLElement{
             next = this.min
             this.playingDirection = 1
         }
-        // console.log(1, next, 2, this.currentState[this.prop], 3, this.controls.currentState[this.prop])
+        // console.log(next, increment, this.valueStep)
         this.currentState[this.prop] = Math.round(next / this.valueStep) / ( 1/ this.valueStep)
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
@@ -362,6 +306,10 @@ class VariableInputRange extends HTMLElement{
         this.controls.currentState.globalPlaying--;
         cancelAnimationFrame(this.animation)
         
+    }
+    updateState(prop, value){
+        // this.controls.currentState[prop] = value;
+        this.controls.currentState.variations[prop] = value;
     }
 }
 
@@ -396,7 +344,7 @@ class FeatureBlock extends HTMLElement{
             this.checkbox.checked = true;
         }
 
-        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop] : this.checkbox.checked
+        this.currentState[this.prop] = this.controls.currentState.features[this.prop]? this.controls.currentState.features[this.prop] : this.checkbox.checked
 
         this.checkbox.id = `${this.prop}Box`;
 
@@ -412,8 +360,8 @@ class FeatureBlock extends HTMLElement{
         this.updateUI()
     }
     updateUI(){
-        this.checkbox.checked = this.controls.currentState[this.prop]
-        updateFeatureCSS(this.prop, this.controls.currentState[this.prop])
+        this.checkbox.checked = this.controls.currentState.features[this.prop]
+        this.controls.updateFeatureCSS(this.prop, this.controls.currentState.features[this.prop])
     }
     changeHandler(ev){
         this.currentState[this.prop] = ev.target.checked;
@@ -421,7 +369,8 @@ class FeatureBlock extends HTMLElement{
         this.updateUI()
     }
     updateState(prop, value){
-        this.controls.currentState[prop] = value;
+        // this.controls.currentState[prop] = value;
+        this.controls.currentState.features[prop] = value;
     }
 }
 
@@ -456,20 +405,19 @@ class ColorBlock extends HTMLElement{
         this.inputColor.addEventListener('input', this.inputHandler.bind(this));
         this.inputCode.addEventListener('change', this.changeHandler.bind(this));
         this.labelName.textContent = this.name;
-        this.currentState[this.prop] = this.controls.currentState[this.prop]? this.controls.currentState[this.prop]: `#${this.default}`;
+        this.currentState[this.prop] = this.controls.currentState.colors[this.prop]? this.controls.currentState.colors[this.prop]: `#${this.default}`;
 
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
     updateUI(){
-        this.inputCode.value = this.controls.currentState[this.prop];
-        this.inputColor.value = this.controls.currentState[this.prop];
+        this.inputCode.value = this.controls.currentState.colors[this.prop];
+        this.inputColor.value = this.controls.currentState.colors[this.prop];
 
-        updateColor(this.prop, this.controls.currentState[this.prop])
+        this.controls.updateColor()
     }
     inputHandler(ev){
         this.currentState[this.prop] = ev.target.value.toUpperCase()
-
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
     }
@@ -480,7 +428,6 @@ class ColorBlock extends HTMLElement{
             temp = `#${temp.toString(16)}`
 
         }else{
-            console.log(ev.target.value)
             temp = parseInt(checkIf3letters(ev.target.value.slice(1)),16) || this.default;
             temp = `#${temp.toString(16)}`
         }
@@ -496,7 +443,8 @@ class ColorBlock extends HTMLElement{
         }
     }
     updateState(prop, value){
-        this.controls.currentState[prop] = value;
+        // this.controls.currentState[prop] = value;
+        this.controls.currentState.colors[prop] = value;
     }
 }
 
@@ -519,23 +467,31 @@ class ToolBox extends HTMLElement{
     initializeUI(){
         switch (this.label.textContent) {
             case this.settings.toolBoxes[0]: 
+                this.setState('instance')
                 this.buildInstanceSelector()
                 break;
             case this.settings.toolBoxes[1]: 
+                this.setState('basics')
                 this.buildBasicControls()
                 break;
             case this.settings.toolBoxes[2]: 
+                this.setState('variations')
                 this.buildVariableControls()
                 break;
             case this.settings.toolBoxes[3]: 
+                this.setState('features')
                 this.buildFeatureControls()
                 break;
             case this.settings.toolBoxes[4]: 
+                this.setState('colors')
                 this.buildColorControls()
                 break;
             default:
                 break;
         }
+    }
+    setState(props){
+        this.controls.currentState[props] ??= {}
     }
     buildInstanceSelector(){
         const toolboxHeader = document.createElement('toolbox-header')
@@ -572,7 +528,7 @@ class ToolBox extends HTMLElement{
         }
 
         playAllBtn.textContent = 'Play All'
-        setSpeedBtn.textContent = `Speed ×${this.controls.currentState.playSpeed}`
+        setSpeedBtn.textContent = `×${this.controls.currentState.playSpeed}`
         playAllBtn.classList.add("paused")
 
         playAllBtn.addEventListener('click', (ev)=>{
@@ -595,7 +551,7 @@ class ToolBox extends HTMLElement{
             this.controls.currentState.playSpeed = this.settings.playSpeeds[currentSpeedIdx]
             this.querySelectorAll('variableinput-range').forEach(el=>{
                 el.playSpeed = this.controls.currentState.playSpeed
-                ev.target.textContent = `Speed ×${this.controls.currentState.playSpeed}`
+                ev.target.textContent = `×${this.controls.currentState.playSpeed}`
             })
         })
 
@@ -607,6 +563,12 @@ class ToolBox extends HTMLElement{
 
     buildFeatureControls(){
         for(const feature of this.settings.featureLists){
+            if (feature.tag === "locl"){
+                this.controls.currentState.features??={}
+                this.controls.currentState.features.locl = "";
+                userText.style.webkitLocale = `"${feature.selectedLanguage.htmlTag}"`||"auto"
+                userText.style.fontLanguageOverride  = `"${feature.selectedLanguage.tag}"`||"auto"
+            }
             const featureBlock = document.createElement('feature-block')
             featureBlock.feature = feature
             featureBlock.controls = this.controls
@@ -629,7 +591,7 @@ export default class ControlBar extends HTMLElement{
     constructor(){
         super()
         this.font = currentFont
-        this.controls = new Controls(this.font);
+        this.controls = new Settings(this.font);
         this.controls.parent = this;
         this.id = 'control-bar'
     }
@@ -659,76 +621,6 @@ export default class ControlBar extends HTMLElement{
     }
     removeChild(){
         this.innerHTML= ''
-    }
-}
-
-class Controls{
-    constructor(opentypeFont){
-        this.font = opentypeFont
-        this.updateData(opentypeFont)
-        this.currentState = {};
-    }
-    updateData(opentypeFont){
-        const _this = this;
-        this.font = opentypeFont;
-        this.fileName = opentypeFont.fileName;
-        this.variationAxes = this.font.variationAxes;
-        this.gsubFeatures = this.font.gsubFeatures;
-        this.gposFeatures = this.font.gposFeatures;
-        this.featureLists = [this.font.gsubFeatures].concat([this.font.gposFeatures]).flatMap(e=>e);
-        this.settings = {
-            // textKinds,
-            playSpeeds : [0.5, 1, 1.5, 2],
-            featureLists : this.featureLists,
-            toolBoxes : ['Typeface', 'Basic Controls', 'Variable Settings','Opentype Features',  'Colors'],
-            toolBoxCheckers : [true, true, this.variationAxes[0], this.featureLists[0],  true],
-            basicControls : {
-                "Size": {min: 10, max:300, default:100, step:1, prop: "fontSize", unit:"px"}, 
-                "Line Height": {min: 0, max:2, default:1.2, step:0.01, prop: "lineHeight"}, 
-                "Letter Spacing": {min: -1, max:1, default:0, step:0.01, prop: "letterSpacing", unit:"rem"}
-            },
-            capTags: ["smcp", "c2sc", "pcap", "c2pc"],
-            figureTags: ["pnum", "tnum", "lnum", "onum"],
-            figureHeights: [
-                { value: "default", label: "default" },
-                { value: "lnum", label: "lining" },
-                { value: "onum", label: "oldstyle" },
-            ],
-            figureHeight: "default",
-            figureWidths: [
-                { value: "default", label: "default" },
-                { value: "pnum", label: "proportional" },
-                { value: "tnum", label: "tabular" },
-            ],
-            figureWidth: "default",
-            numberTags: ["sups", "subs", "numr", "dnom", "frac", "zero"],
-            stylisticSetTags: Array(20)
-                .fill(0)
-                .map((_, i) => `ss${(i + 1).toString().padStart(2, "0")}`),
-            characterVariantsTags: Array(99)
-                .fill(0)
-                .map((_, i) => `cv${(i + 1).toString().padStart(2, "0")}`),
-            loclTags: ["locl"],
-            loclSelectKeys: {
-                class: "class",
-                label: "name",
-                image: "image",
-            },
-            colorData: {
-                "Typeface":{prop: "color", defaultValue:"000000"},
-                "Background": {prop: "backgroundColor", defaultValue:"FFFFFF"}},
-            easing: '',
-            updateInstance(){
-                const coordinates = _this.currentState.instance[0].coordinates;
-                for (const [axis, value] of Object.entries(coordinates)){
-                    const inputs = _this.parent.querySelectorAll(`.${axis}input`)
-                    for (const input of inputs){
-                        input.value =  Math.round(value * 100) / 100;
-                    }
-                    updateVariationCSS(axis, value)
-                }
-            }
-        }
     }
 }
 
